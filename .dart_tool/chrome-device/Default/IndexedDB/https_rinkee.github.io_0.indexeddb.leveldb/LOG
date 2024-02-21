@@ -1,0 +1,7 @@
+2024/02/21-18:41:02.945 8107 Reusing MANIFEST /private/var/folders/pd/mv8r68h56gx6szk2zb8yy04h0000gn/T/flutter_tools.cHxUBD/flutter_tools_chrome_device.WsCbIm/Default/IndexedDB/https_rinkee.github.io_0.indexeddb.leveldb/MANIFEST-000001
+2024/02/21-18:41:02.945 8107 Recovering log #3
+2024/02/21-18:41:02.945 8107 Reusing old log /private/var/folders/pd/mv8r68h56gx6szk2zb8yy04h0000gn/T/flutter_tools.cHxUBD/flutter_tools_chrome_device.WsCbIm/Default/IndexedDB/https_rinkee.github.io_0.indexeddb.leveldb/000003.log 
+2024/02/21-18:41:04.993 8803 Level-0 table #5: started
+2024/02/21-18:41:05.018 8803 Level-0 table #5: 394 bytes OK
+2024/02/21-18:41:05.059 8803 Delete type=0 #3
+2024/02/21-18:41:05.060 8803 Manual compaction at level-0 from (begin) .. (end); will stop at (end)
