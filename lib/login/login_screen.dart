@@ -81,17 +81,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.draw_rounded,
-                        color: sgColor,
-                        size: 30,
+                      const Text(
+                        '쉽고 편한 장부 생활',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       const Text(
-                        '온장에 로그인하세요',
-                        style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                        '시작하기',
+                        style: menuTitle,
                       ),
-                      const Gap(50),
+                      const Gap(20),
                       const Padding(
                         padding: EdgeInsets.only(left: 5),
                         child: Text(
@@ -114,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           )),
-                      const Gap(30),
+                      const Gap(20),
                       const Padding(
                         padding: EdgeInsets.only(left: 5),
                         child: Text(
@@ -154,46 +152,46 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           )),
-                      const Gap(10),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  '자동 로그인',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                const Gap(5),
-                                Checkbox(
-                                    value: autoLogin,
-                                    onChanged: (val) {
-                                      autoLogin = val!;
-                                      setState(() {});
-                                    }),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  '이메일 비밀번호 기억',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                const Gap(5),
-                                Checkbox(
-                                    value: rememberEmailAndPassword,
-                                    onChanged: (val) {
-                                      rememberEmailAndPassword = val!;
-                                      setState(() {});
-                                    }),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Gap(30),
+                      const Gap(20),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 5),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Row(
+                      //         children: [
+                      //           const Text(
+                      //             '자동 로그인',
+                      //             style: TextStyle(fontWeight: FontWeight.bold),
+                      //           ),
+                      //           const Gap(5),
+                      //           Checkbox(
+                      //               value: autoLogin,
+                      //               onChanged: (val) {
+                      //                 autoLogin = val!;
+                      //                 setState(() {});
+                      //               }),
+                      //         ],
+                      //       ),
+                      //       Row(
+                      //         children: [
+                      //           const Text(
+                      //             '이메일 비밀번호 기억',
+                      //             style: TextStyle(fontWeight: FontWeight.bold),
+                      //           ),
+                      //           const Gap(5),
+                      //           Checkbox(
+                      //               value: rememberEmailAndPassword,
+                      //               onChanged: (val) {
+                      //                 rememberEmailAndPassword = val!;
+                      //                 setState(() {});
+                      //               }),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const Gap(30),
                       kBtn(
                           onTap: () async {
                             if (email != '' && password != '') {
@@ -203,7 +201,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               print(passwordHash);
 
                               final auth = Get.put(AuthController());
-                              auth.logIn(email: email, password: password);
+                              final login = await auth.logIn(
+                                  email: email, password: password);
+                              print(login);
 
                               //   final emailCheck = await supabase
                               //       .from('user')
@@ -264,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   snackPosition: SnackPosition.TOP);
                             }
                           },
-                          bgColor: Colors.black,
+                          bgColor: sgColor,
                           child: const Center(
                               child: Text(
                             '이메일 로그인',
@@ -278,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               Get.offAll(const SingInScreen());
                             },
-                            child: const Text('처음이신가요? 회원가입')),
+                            child: const Text('처음이신가요? 회원가입하기')),
                       ),
                     ],
                   ),

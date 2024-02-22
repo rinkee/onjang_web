@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
 
-class EditTextField extends StatelessWidget {
+class EditTextField extends StatefulWidget {
   const EditTextField(
       {super.key,
       required this.ctr,
@@ -11,7 +12,7 @@ class EditTextField extends StatelessWidget {
       this.bgColor,
       this.onTap,
       this.onChanged,
-      this.hideContent = false
+      this.isPassword = false
       // required this.value,
       });
 
@@ -21,8 +22,23 @@ class EditTextField extends StatelessWidget {
   final Color? bgColor;
   final GestureTapCallback? onTap;
   final ValueChanged<String>? onChanged;
-  final bool? hideContent;
+  final bool isPassword;
+
+  @override
+  State<EditTextField> createState() => _EditTextFieldState();
+}
+
+class _EditTextFieldState extends State<EditTextField> {
   // final String value;
+  var showPassword = true.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isPassword == false) {
+      showPassword.value = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +48,43 @@ class EditTextField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 5),
           child: Text(
-            title,
+            widget.title,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         const Gap(5),
         KContainer(
-          color: bgColor ?? Colors.grey[100],
+          color: widget.bgColor ?? Colors.grey[100],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Center(
-              child: TextField(
-                controller: ctr,
-                onTap: onTap,
-                obscureText: hideContent == true ? true : false,
-                onChanged: onChanged,
-                decoration: InputDecoration(
-                    border: InputBorder.none, hintText: hintText),
-              ),
-            ),
+            child: Obx(() => Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: widget.ctr,
+                        onTap: widget.onTap,
+                        obscureText: showPassword.value,
+                        onChanged: widget.onChanged,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: widget.hintText),
+                      ),
+                    ),
+                    widget.isPassword == true
+                        ? IconButton(
+                            onPressed: () {
+                              if (showPassword.value == true) {
+                                showPassword.value = false;
+                              } else {
+                                showPassword.value = true;
+                              }
+                            },
+                            icon: Icon(showPassword.value
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded))
+                        : const SizedBox()
+                  ],
+                )),
           ),
         ),
         const Gap(10),

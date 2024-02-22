@@ -22,7 +22,7 @@ class kBtn extends StatelessWidget {
     return Container(
       height: defaultContainerH,
       decoration: BoxDecoration(
-        color: bgColor ?? Colors.grey[300],
+        color: bgColor ?? Colors.grey[100],
         borderRadius: const BorderRadius.all(
           Radius.circular(20.0),
         ),

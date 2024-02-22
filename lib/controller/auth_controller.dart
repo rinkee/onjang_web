@@ -28,23 +28,24 @@ class AuthController extends GetxController {
       final AuthChangeEvent event = data.event;
       // final Session? session = data.session;
       if (event == AuthChangeEvent.signedIn) {
-        Get.off(const HomeScreenDesktop());
+        fetchUserData(supabase.auth.currentUser!.id);
+        Get.offAll(const HomeScreenDesktop());
         print('crtUser : ${supabase.auth.currentUser}');
       } else {
         if (event == AuthChangeEvent.signedOut) {
           print('go to login');
-          Get.off(const LoginScreen());
+          Get.offAll(const LoginScreen());
         }
       }
       final session = supabase.auth.currentSession;
       if (session != null) {
         print('go to Home with session');
         fetchUserData(session.user.id);
-        Get.to(const HomeScreenDesktop());
+        Get.offAll(const HomeScreenDesktop());
       } else {
         print('go to login with session');
 
-        Get.to(const LoginScreen());
+        Get.offAll(const LoginScreen());
       }
     });
     // supabase.auth.onAuthStateChange.listen((data) {
@@ -80,8 +81,9 @@ class AuthController extends GetxController {
       );
       final Session? session = res.session;
       final User? user = res.user;
+      return res;
     } catch (e) {
-      print(e);
+      return e;
     }
   }
 
@@ -105,9 +107,10 @@ class AuthController extends GetxController {
         'store_name': store_name,
         'uid': user!.id,
       }).select('*');
+      return res;
     } catch (e) {
-      print(e.hashCode);
       print(e);
+      return 'error';
     }
   }
 
@@ -134,7 +137,7 @@ class AuthController extends GetxController {
   // }
 
   // // Sign out
-  // Future<void> signOut() {
-  //   return auth.signOut();
-  // }
+  Future<void> signOut() {
+    return supabase.auth.signOut();
+  }
 }

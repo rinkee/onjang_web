@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jangboo_flutter/const/const.dart';
 import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/controller/customer_content_controller.dart';
 import 'package:jangboo_flutter/controller/screen_controller.dart';
@@ -62,7 +63,7 @@ class MyApp extends StatelessWidget {
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple,
+            seedColor: sgColor,
             background: Colors.white,
           ),
           useMaterial3: true,

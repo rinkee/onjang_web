@@ -14,6 +14,7 @@ import 'package:jangboo_flutter/controller/customer_content_controller.dart';
 import 'package:jangboo_flutter/customer/customer_screen3.dart';
 import 'package:jangboo_flutter/layout/desktopLayout.dart';
 import 'package:jangboo_flutter/supabase.dart';
+import 'package:jangboo_flutter/user/user_screen_desktop.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class HomeScreenDesktop extends StatefulWidget {
@@ -44,9 +45,38 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
       child: MaxWidthBox(
         maxWidth: maxWidth,
         child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.grey[100],
+            title: const Text('장부 이름'),
+            actions: [
+              Obx(
+                () => Text(
+                  userCtr.storeName.value,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+              const Gap(20),
+              Obx(() => Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: SizedBox(
+                        height: 45,
+                        child: kBtn(
+                            onTap: () async {
+                              Get.to(() => const UserScreenDesktop());
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              child: Center(
+                                child: Text(userCtr.userName.value),
+                              ),
+                            ))),
+                  )),
+            ],
+          ),
           backgroundColor: Colors.grey[100],
           body: Padding(
-            padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
+            padding: const EdgeInsets.only(left: 30, top: 20, right: 30),
             child: Row(
               children: [
                 Expanded(

@@ -84,7 +84,7 @@ class _SingInScreenState extends State<SingInScreen> {
     } else if (value.length < 6) {
       return '비밀번호는 6자리 이상이어야 합니다';
     } else if (!regExp.hasMatch(value)) {
-      return '특수문자, 문자, 숫자 포함 8자 이상 15자 이내로 입력하세요.';
+      return '특수문자, 문자, 숫자 포함 6자 이상 15자 이내로 입력하세요.';
     } else {
       return null; //null을 반환하면 정상
     }
@@ -99,7 +99,7 @@ class _SingInScreenState extends State<SingInScreen> {
   TextEditingController passwordCtr = TextEditingController();
 
   var passwordBgColor = Colors.grey[100];
-  var passwordHintText = '';
+  var passwordHintText = '6자리 이상 공백 없이 만들어주세요';
 
   var emailBgColor = Colors.grey[100];
   var emailHintText = '';
@@ -189,7 +189,7 @@ class _SingInScreenState extends State<SingInScreen> {
       maxWidth: maxWidth,
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 30),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,22 +197,15 @@ class _SingInScreenState extends State<SingInScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.draw_rounded,
-                      color: sgColor,
-                      size: 30,
-                    ),
                     const Text(
                       '4가지만 입력하면',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: menuTitle,
                     ),
                     const Text(
                       '가입완료',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: menuTitle,
                     ),
-                    const Gap(30),
+                    const Gap(15),
                     Row(
                       children: [
                         Expanded(
@@ -220,7 +213,7 @@ class _SingInScreenState extends State<SingInScreen> {
                             ctr: emailCtr,
                             title: '이메일',
                             bgColor: emailBgColor,
-                            hintText: '이메일을 입력 해 주세요',
+                            hintText: emailHintText,
                             onTap: () {
                               emailBgColor = Colors.grey[100];
                               setState(() {});
@@ -243,10 +236,10 @@ class _SingInScreenState extends State<SingInScreen> {
                               title: '비밀번호',
                               bgColor: passwordBgColor,
                               hintText: passwordHintText,
-                              hideContent: true,
+                              isPassword: true,
                               onTap: () {
                                 passwordBgColor = Colors.grey[100];
-                                passwordHintText = '';
+
                                 setState(() {});
                               },
                               onChanged: (_) {
@@ -258,6 +251,7 @@ class _SingInScreenState extends State<SingInScreen> {
                         ),
                       ],
                     ),
+                    const Gap(10),
 
                     // const Padding(
                     //   padding: EdgeInsets.only(left: 5),
@@ -296,29 +290,38 @@ class _SingInScreenState extends State<SingInScreen> {
                     //         ),
                     //       )),
                     // ),
-                    EditTextField(
-                      ctr: nameCtr,
-                      title: '이름',
-                      bgColor: nameBgColor,
-                      hintText: '사용자의 이름을 입력 해 주세요',
-                      onChanged: (_) {
-                        if (_ == '') {
-                          nameBgColor = Colors.grey[100];
-                          setState(() {});
-                        }
-                      },
-                    ),
-                    EditTextField(
-                      ctr: storeNameCtr,
-                      title: '가게명',
-                      bgColor: storeNameBgColor,
-                      hintText: '사용자의 가게명을 입력 해 주세요',
-                      onChanged: (_) {
-                        if (_ == '') {
-                          storeNameBgColor = Colors.grey[100];
-                          setState(() {});
-                        }
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: EditTextField(
+                            ctr: nameCtr,
+                            title: '이름',
+                            bgColor: nameBgColor,
+                            hintText: '사용자의 이름을 입력 해 주세요',
+                            onChanged: (_) {
+                              if (_ == '') {
+                                nameBgColor = Colors.grey[100];
+                                setState(() {});
+                              }
+                            },
+                          ),
+                        ),
+                        const Gap(20),
+                        Expanded(
+                          child: EditTextField(
+                            ctr: storeNameCtr,
+                            title: '가게명',
+                            bgColor: storeNameBgColor,
+                            hintText: '사용자의 가게명을 입력 해 주세요',
+                            onChanged: (_) {
+                              if (_ == '') {
+                                storeNameBgColor = Colors.grey[100];
+                                setState(() {});
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
 
                     const Gap(20),
@@ -342,15 +345,23 @@ class _SingInScreenState extends State<SingInScreen> {
                                   nameCtr.text != '' &&
                                   storeNameCtr.text != '') {
                                 final auth = Get.put(AuthController());
-                                auth.signUp(
+                                final result = await auth.signUp(
                                     email: email,
                                     password: password,
                                     name: nameCtr.text,
                                     passwordHash: passwordHash,
                                     store_name: storeNameCtr.text);
+
+                                // print(result['message']);
+                                if (result == 'error') {
+                                  emailCtr.clear();
+                                  emailHintText = '이미 존재하는 이메일입니다';
+                                  emailBgColor = Colors.red[100];
+                                  setState(() {});
+                                }
                               }
                             },
-                            bgColor: Colors.black,
+                            bgColor: sgColor,
                             child: const Center(
                                 child: Text(
                               '시작하기',

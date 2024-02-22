@@ -12,8 +12,8 @@ class ShowRecordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: Padding(
+      appBar: AppBar(),
+      body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +24,6 @@ class ShowRecordScreen extends StatelessWidget {
               ),
               const Gap(20),
               Expanded(
-                flex: 2,
                 child: FutureBuilder(
                   future: supabase
                       .from('balance_log')
@@ -127,8 +126,8 @@ class ShowRecordScreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ));
+          )),
+    );
   }
 
   Map<String, List<Map<String, dynamic>>> groupTransactionsByDate(

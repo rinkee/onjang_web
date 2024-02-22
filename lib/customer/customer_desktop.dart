@@ -277,18 +277,257 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                 icon: const Icon(Icons.delete_outline_rounded))
           ],
         ),
-        body: MaxWidthBox(
-          maxWidth: 800,
-          child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NameAndActionButton(),
-                ],
-              )),
-        ),
+        body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: FutureBuilder(
+                future: supabase
+                    .from('balance_log')
+                    .select()
+                    .eq(
+                      'customer_id',
+                      customer.id,
+                    )
+                    .order('created_at', ascending: false),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: Text('잠시후 다시 시도해주세요'),
+                    );
+                  }
+                  var groupedTransactions =
+                      groupTransactionsByDate(snapshot.data!);
+                  // 날짜와 가격 처리를 위한 함수
+                  String formatLastUsedDate(DateTime createdAt) {
+                    final today = DateTime.now();
+                    final difference = today.difference(createdAt).inDays;
+
+                    if (difference > 0) {
+                      return '$difference일 전';
+                    } else {
+                      return '오늘';
+                    }
+                  }
+
+                  // 메인 로직
+                  var lastUsedDate = '기록 없음';
+                  var lastUsedPrice = 0;
+                  var avgUsedMoney = 0.0;
+
+                  if (snapshot.data!.isNotEmpty) {
+                    var logData = snapshot.data!.first;
+                    print(snapshot.data!.first);
+
+                    // 마지막 사용 날짜 처리
+                    if (logData['created_at'] != null) {
+                      lastUsedDate = formatLastUsedDate(
+                          DateTime.parse(logData['created_at']));
+                    }
+
+                    // 마지막 사용 금액 처리
+                    lastUsedPrice = logData['money'] ?? 0;
+
+                    // 'use' 타입의 데이터 필터링 및 평균 계산
+                    var usedMoneyData = snapshot.data!
+                        .where((data) =>
+                            data['type'] == 'use' && data['money'] != null)
+                        .map((data) => int.parse(data['money'].toString()))
+                        .toList();
+
+                    if (usedMoneyData.isNotEmpty) {
+                      avgUsedMoney = usedMoneyData
+                              .reduce((value, element) => value + element) /
+                          usedMoneyData.length;
+                    }
+                  }
+
+                  print(groupedTransactions.isEmpty);
+
+                  return Row(
+                    children: [
+                      Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                NameAndActionButton(),
+                                Row(
+                                  children: [
+                                    StackContent(
+                                      title: '최근 사용',
+                                      content: lastUsedDate,
+                                    ),
+                                    const Gap(10),
+                                    StackContent(
+                                      title: '최근 사용 금액',
+                                      content:
+                                          '${f.format(lastUsedPrice)}원', // lastUsedPrice가 int 타입이라면, int.parse() 제거
+                                    ),
+                                    const Gap(10),
+                                    StackContent(
+                                      title: '평균 사용 금액',
+                                      content:
+                                          '${f.format(avgUsedMoney.floor())}원', // avgUsedMoney를 바닥 함수로 처리하고 포맷 적용
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )),
+                      const Gap(20),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    '기록',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  groupedTransactions.isEmpty
+                                      ? const SizedBox()
+                                      : TextButton(
+                                          onPressed: () {
+                                            Get.to(() => ShowRecordScreen(
+                                                customerId: customer.id));
+                                          },
+                                          child: const Text('더보기'))
+                                ],
+                              ),
+                              groupedTransactions.isEmpty
+                                  ? const Expanded(
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.receipt_long_rounded,
+                                              color: Colors.grey,
+                                            ),
+                                            Gap(10),
+                                            Text(
+                                              '아직 기록이 없어요',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : Expanded(
+                                      child: ListView.builder(
+                                      itemCount:
+                                          groupedTransactions.keys.length,
+                                      itemBuilder: (context, index) {
+                                        String date = groupedTransactions.keys
+                                            .elementAt(index);
+                                        List<Map<String, dynamic>>
+                                            dailyTransactions =
+                                            groupedTransactions[date]!;
+
+                                        if (snapshot.data!.isNotEmpty) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 5, top: 10),
+                                                child: Text(date,
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                              ),
+                                              ListView.builder(
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(), // 중첩된 ListView 스크롤 문제 방지
+                                                shrinkWrap:
+                                                    true, // 내부 ListView 크기 자동 조절
+                                                itemCount:
+                                                    dailyTransactions.length,
+                                                itemBuilder: (context, idx) {
+                                                  var transaction =
+                                                      dailyTransactions[idx];
+
+                                                  return Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(0.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              DateFormat(
+                                                                      'HH:mm')
+                                                                  .format(DateTime.parse(
+                                                                      transaction[
+                                                                          'created_at'])),
+                                                              style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                            Text(
+                                                              '${f.format(transaction['money'])}원',
+                                                              style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                            Text(
+                                                              transaction['type'] ==
+                                                                      'add'
+                                                                  ? '충전'
+                                                                  : '사용',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: transaction[
+                                                                              'type'] ==
+                                                                          'add'
+                                                                      ? sgColor
+                                                                      : Colors
+                                                                          .grey),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Divider(
+                                                        color: Colors.grey[100],
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        } else {
+                                          return const Text('기록이 없어요');
+                                        }
+                                      },
+                                    )),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                })),
       ),
     );
   }
@@ -302,7 +541,8 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                 children: [
                   Text(
                     customerCtr.coName.value,
-                    style: TextStyle(fontSize: 26, color: Colors.grey[700]),
+                    style: TextStyle(
+                        fontSize: 26, color: Colors.grey[700], height: 0.8),
                   ),
                   IconButton(
                       onPressed: () {
@@ -319,289 +559,80 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
           Obx(
             () => Text(
               '${f.format(customerCtr.balance.value)}원',
-              style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontSize: 36, fontWeight: FontWeight.bold, height: 1),
             ),
           ),
-          const Gap(10),
-          Obx(
-            () => KContainer(
-              h: 65,
-              color: Colors.grey[100],
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        child: kBtn(
-                          onTap: () {
-                            customerCtr.type.value = ActionType.use.title;
-
-                            customerCtr.enterPrice.value = '';
-                            numberPadCtr.clear();
-                            customerCtr.seclectedMenu = ActionType.use;
-                            ActionBottomSheet();
-                          },
-                          hoverColor: Colors.grey[300],
-                          bgColor:
-                              customerCtr.type.value == ActionType.use.title
-                                  ? Colors.blue
-                                  : Colors.grey[200],
-                          child: Center(
-                              child: Text(
-                            '사용하기',
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: customerCtr.type.value ==
-                                        ActionType.use.title
-                                    ? Colors.white
-                                    : Colors.grey[600]),
-                          )),
-                        ),
-                      ),
-                    ),
-
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: VerticalDivider(),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        child: kBtn(
-                          onTap: () {
-                            customerCtr.type.value = ActionType.add.title;
-                            customerCtr.enterPrice.value = '';
-                            numberPadCtr.clear();
-                            customerCtr.seclectedMenu = ActionType.add;
-                            ActionBottomSheet();
-                          },
-                          hoverColor: Colors.grey[300],
-                          bgColor:
-                              customerCtr.type.value == ActionType.add.title
-                                  ? sgColor
-                                  : Colors.grey[200],
-                          child: Center(
-                              child: Text(
-                            '채우기',
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: customerCtr.type.value ==
-                                        ActionType.add.title
-                                    ? Colors.white
-                                    : Colors.grey[600]),
-                          )),
-                        ),
-                      ),
-                    ),
-                    // kBtn(
-                    //     onTap: () {
-                    //       customerCtr.type.value = ActionType.add.title;
-                    //       customerCtr.enterPrice.value = '';
-                    //       numberPadCtr.clear();
-                    //       customerCtr.seclectedMenu = ActionType.add;
-                    //     },
-                    //     // title: '충전하기',
-                    //     // select: customerCtr.type.value == ActionType.add.title,
-                    //     bgColor: customerCtr.type.value == ActionType.add.title
-                    //         ? sgColor
-                    //         : Colors.white,
-                    //     child: const Text('충전하기'),),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const Gap(10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const Gap(30),
+          KContainer(
+            h: 80,
+            child: Row(
               children: [
                 Expanded(
-                  child: SizedBox(
-                    child: FutureBuilder(
-                        future: supabase
-                            .from('balance_log')
-                            .select()
-                            .eq(
-                              'customer_id',
-                              customer.id,
-                            )
-                            .order('created_at', ascending: false),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Text('nodata');
-                          }
-                          // 날짜와 가격 처리를 위한 함수
-                          String formatLastUsedDate(DateTime createdAt) {
-                            final today = DateTime.now();
-                            final difference =
-                                today.difference(createdAt).inDays;
+                  child: kBtn(
+                    onTap: () {
+                      customerCtr.type.value = ActionType.use.title;
 
-                            if (difference > 0) {
-                              return '$difference일 전';
-                            } else {
-                              return '오늘';
-                            }
-                          }
-
-                          // 메인 로직
-                          var lastUsedDate = '기록 없음';
-                          var lastUsedPrice = 0;
-                          var avgUsedMoney = 0.0;
-
-                          if (snapshot.data!.isNotEmpty) {
-                            var logData = snapshot.data!.first;
-
-                            // 마지막 사용 날짜 처리
-                            if (logData['created_at'] != null) {
-                              lastUsedDate = formatLastUsedDate(
-                                  DateTime.parse(logData['created_at']));
-                            }
-
-                            // 마지막 사용 금액 처리
-                            lastUsedPrice = logData['money'] ?? 0;
-
-                            // 'use' 타입의 데이터 필터링 및 평균 계산
-                            var usedMoneyData = snapshot.data!
-                                .where((data) =>
-                                    data['type'] == 'use' &&
-                                    data['money'] != null)
-                                .map((data) =>
-                                    int.parse(data['money'].toString()))
-                                .toList();
-
-                            if (usedMoneyData.isNotEmpty) {
-                              avgUsedMoney = usedMoneyData.reduce(
-                                      (value, element) => value + element) /
-                                  usedMoneyData.length;
-                            }
-                          }
-
-                          return Column(
-                            children: [
-                              Row(
-                                children: [
-                                  StackContent(
-                                    title: '최근 사용',
-                                    content: lastUsedDate,
-                                  ),
-                                  const Gap(10),
-                                  StackContent(
-                                    title: '최근 사용 금액',
-                                    content:
-                                        '${f.format(lastUsedPrice)}원', // lastUsedPrice가 int 타입이라면, int.parse() 제거
-                                  ),
-                                  const Gap(10),
-                                  StackContent(
-                                    title: '평균 사용 금액',
-                                    content:
-                                        '${f.format(avgUsedMoney.floor())}원', // avgUsedMoney를 바닥 함수로 처리하고 포맷 적용
-                                  ),
-                                ],
-                              ),
-                              const Gap(10),
-                              Expanded(
-                                child: KContainer(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              '기록',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                            ),
-                                            TextButton(
-                                                onPressed: () {
-                                                  Get.to(() => ShowRecordScreen(
-                                                      customerId: customer.id));
-                                                },
-                                                child: const Text('더보기'))
-                                          ],
-                                        ),
-                                        const Gap(10),
-                                        const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                                flex: 2, child: Text('날짜')),
-                                            Expanded(child: Text('가격')),
-                                            Expanded(child: Text('정보')),
-                                          ],
-                                        ),
-                                        const Gap(10),
-                                        Expanded(
-                                          child: ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: snapshot.data!.length,
-                                              itemBuilder: (conext, index) {
-                                                final logData =
-                                                    snapshot.data![index];
-
-                                                var option = 'add';
-                                                var title = '충전';
-                                                var optionColor = Colors.green;
-                                                if (logData['type']
-                                                        .toString() ==
-                                                    'use') {
-                                                  option = 'use';
-                                                  title = '사용';
-                                                  optionColor = Colors.grey;
-                                                }
-                                                var time = DateTime.parse(
-                                                    logData['created_at']);
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 5),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(DateFormat(
-                                                                'yy.MM.dd / HH:mm:ss')
-                                                            .format(time)),
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                            '${f.format(logData['money'])}원'),
-                                                      ),
-                                                      Expanded(
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              title,
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      optionColor),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }),
+                      customerCtr.enterPrice.value = '';
+                      numberPadCtr.clear();
+                      customerCtr.seclectedMenu = ActionType.use;
+                      ActionBottomSheet();
+                    },
+                    hoverColor: Colors.grey[300],
+                    bgColor: Colors.orange,
+                    child: const Center(
+                        child: Text(
+                      '사용하기',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    )),
                   ),
                 ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  child: VerticalDivider(),
+                ),
+                Expanded(
+                  child: kBtn(
+                    onTap: () {
+                      customerCtr.type.value = ActionType.add.title;
+                      customerCtr.enterPrice.value = '';
+                      numberPadCtr.clear();
+                      customerCtr.seclectedMenu = ActionType.add;
+                      ActionBottomSheet();
+                    },
+                    hoverColor: Colors.grey[300],
+                    bgColor: Colors.orange[100],
+                    child: Center(
+                        child: Text(
+                      '채우기',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange[700]),
+                    )),
+                  ),
+                ),
+                // kBtn(
+                //     onTap: () {
+                //       customerCtr.type.value = ActionType.add.title;
+                //       customerCtr.enterPrice.value = '';
+                //       numberPadCtr.clear();
+                //       customerCtr.seclectedMenu = ActionType.add;
+                //     },
+                //     // title: '충전하기',
+                //     // select: customerCtr.type.value == ActionType.add.title,
+                //     bgColor: customerCtr.type.value == ActionType.add.title
+                //         ? sgColor
+                //         : Colors.white,
+                //     child: const Text('충전하기'),),
               ],
             ),
           ),
+          const Gap(10),
         ],
       ),
     );
@@ -610,12 +641,12 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
   Future<dynamic> ActionBottomSheet() {
     var title = '사용하기';
     var useText = '얼마를 사용할까요?';
-    Color color = Colors.blue;
+    Color color = Colors.orange;
 
     if (customerCtr.seclectedMenu == ActionType.add) {
       title = '채우기';
       useText = '얼마를 채울까요?';
-      color = sgColor;
+      color = Colors.green;
     }
 
     return showDialog(
@@ -631,199 +662,211 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
           phoneCtr.text = customerCtr.coPhone.value;
           cardCtr.text = customerCtr.coCard.value;
           barcodeCtr.text = customerCtr.coBarcode.value;
+          isLoading.value = false;
+          doneAction.value = false;
           print(doneAction.value);
           return Dialog(
-            child: Obx(() => KContainer(
-                  color: Colors.white,
-                  h: 550,
-                  child: Padding(
-                    padding: const EdgeInsets.all(50.0),
-                    child: !doneAction.value
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: menuTitle,
-                              ),
-                              const Gap(10),
-                              KContainer(
-                                  w: 50,
-                                  h: 5,
-                                  color: color,
-                                  child: const SizedBox()),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Gap(50),
-                                        Text(
-                                          '잔액 ${f.format(customerCtr.balance.value)}원에서',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.grey[700]),
-                                        ),
-                                        // RichText(
-                                        //     text: TextSpan(
-                                        //         text: '잔액 ${f.format(customerCtr.balance.value)}',
-                                        //         style: TextStyle(
-                                        //             fontSize: 18,
-                                        //             fontWeight: FontWeight.bold,
-                                        //             color: Colors.grey[800]),
-                                        //         children: const [
-                                        //       TextSpan(
-                                        //         text: '원에서',
-                                        //         style: TextStyle(
-                                        //             fontSize: 18, fontWeight: FontWeight.normal),
-                                        //       )
-                                        //     ])),
+            child: Obx(() => MaxWidthBox(
+                  maxWidth: maxWidth,
+                  child: KContainer(
+                    color: Colors.white,
+                    h: 550,
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: !doneAction.value
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  style: menuTitle,
+                                ),
+                                const Gap(10),
+                                KContainer(
+                                    w: 50,
+                                    h: 5,
+                                    color: color,
+                                    child: const SizedBox()),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Gap(50),
+                                          Text(
+                                            '잔액 ${f.format(customerCtr.balance.value)}원',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.grey[700]),
+                                          ),
 
-                                        Obx(() {
-                                          var showNumber = 0;
-                                          if (customerCtr.enterPrice.value !=
-                                              '') {
-                                            // textColor =
-                                            //     const Color.fromRGBO(
-                                            //         0, 0, 0, 1);
-                                            showNumber = int.parse(
-                                                customerCtr.enterPrice.value);
-                                          }
-                                          var showPriceSideCard =
-                                              customerCtr.enterPrice.value == ''
-                                                  ? useText
-                                                  : '${f.format(showNumber)}원';
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 0),
-                                            child: Text(
-                                              showPriceSideCard,
-                                              style: const TextStyle(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          );
-                                        }),
-                                      ],
+                                          // RichText(
+                                          //     text: TextSpan(
+                                          //         text: '잔액 ${f.format(customerCtr.balance.value)}',
+                                          //         style: TextStyle(
+                                          //             fontSize: 18,
+                                          //             fontWeight: FontWeight.bold,
+                                          //             color: Colors.grey[800]),
+                                          //         children: const [
+                                          //       TextSpan(
+                                          //         text: '원에서',
+                                          //         style: TextStyle(
+                                          //             fontSize: 18, fontWeight: FontWeight.normal),
+                                          //       )
+                                          //     ])),
+
+                                          Obx(() {
+                                            var showNumber = 0;
+                                            if (customerCtr.enterPrice.value !=
+                                                '') {
+                                              // textColor =
+                                              //     const Color.fromRGBO(
+                                              //         0, 0, 0, 1);
+                                              showNumber = int.parse(
+                                                  customerCtr.enterPrice.value);
+                                            }
+                                            var showPriceSideCard = customerCtr
+                                                        .enterPrice.value ==
+                                                    ''
+                                                ? useText
+                                                : '${f.format(showNumber)}원';
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 0),
+                                              child: Text(
+                                                showPriceSideCard,
+                                                style: const TextStyle(
+                                                    fontSize: 28,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            );
+                                          }),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20)),
-                                          color: Colors.white),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: keys
-                                              .map(
-                                                (x) => Row(
-                                                  children: x.map((y) {
-                                                    return Expanded(
-                                                      child: CustomKeyboardKey(
-                                                        textCtr: numberPadCtr,
-                                                        label: y,
-                                                        onTap: (val) {},
-                                                        value: y,
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              )
-                                              .toList(),
+                                    Expanded(
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20)),
+                                            color: Colors.white),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: keys
+                                                .map(
+                                                  (x) => Row(
+                                                    children: x.map((y) {
+                                                      return Expanded(
+                                                        child:
+                                                            CustomKeyboardKey(
+                                                          textCtr: numberPadCtr,
+                                                          label: y,
+                                                          onTap: (val) {},
+                                                          value: y,
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                )
+                                                .toList(),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
 
-                              // const Gap(10),
-                              const Spacer(),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  kBtn(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      child: const AspectRatio(
-                                          aspectRatio: 1,
-                                          child: Icon(
-                                            Icons.close_rounded,
-                                            color: Colors.grey,
-                                          ))),
-                                  SizedBox(
-                                    width: 200,
-                                    child: kBtn(
-                                        onTap: () async {
-                                          if (isLoading.value == false) {
-                                            isLoading.value = true;
-                                            try {
-                                              await customerCtr
-                                                  .fucAddOrUse(
-                                                      customerId: customer.id)
-                                                  .then((value) {
-                                                doneAction.value = true;
-                                                isLoading.value = false;
-                                              });
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          } else {}
+                                // const Gap(10),
+                                const Spacer(),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    kBtn(
+                                        onTap: () {
+                                          Get.back();
+                                          isLoading.value = false;
                                         },
-                                        bgColor: color,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Center(
-                                              child: Text(
-                                            title,
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
+                                        child: const AspectRatio(
+                                            aspectRatio: 1,
+                                            child: Icon(
+                                              Icons.close_rounded,
+                                              color: Colors.grey,
+                                            ))),
+                                    SizedBox(
+                                      width: 200,
+                                      child: kBtn(
+                                          onTap: () async {
+                                            if (isLoading.value == false) {
+                                              isLoading.value = true;
+                                              try {
+                                                await customerCtr
+                                                    .fucAddOrUse(
+                                                        customerId: customer.id)
+                                                    .then((value) {
+                                                  doneAction.value = true;
+                                                  isLoading.value = false;
+                                                });
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            } else {}
+                                          },
+                                          bgColor: color,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: Center(
+                                                child: Text(
+                                              title,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                           )),
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Gap(50),
-                              Icon(Icons.check_circle_outline_rounded,
-                                  size: 70, color: color),
-                              const Gap(20),
-                              customerCtr.seclectedMenu == ActionType.add
-                                  ? Text(
-                                      '${f.format(int.parse(customerCtr.enterPrice.value))}원 충전완료',
-                                      style: menuTitle,
-                                    )
-                                  : Text(
-                                      '${f.format(int.parse(customerCtr.enterPrice.value))}원 사용완료',
-                                      style: menuTitle,
                                     ),
-                              const Spacer(),
-                              kBtn(
-                                  onTap: () {
-                                    Get.back();
-                                    doneAction.value = false;
-                                    setState(() {});
-                                  },
-                                  child: const Center(child: Text('확인'))),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Gap(50),
+                                Icon(Icons.check_circle_outline_rounded,
+                                    size: 70, color: color),
+                                const Gap(20),
+                                customerCtr.seclectedMenu == ActionType.add
+                                    ? Text(
+                                        '${f.format(int.parse(customerCtr.enterPrice.value))}원 충전완료',
+                                        style: menuTitle,
+                                      )
+                                    : Text(
+                                        '${f.format(int.parse(customerCtr.enterPrice.value))}원 사용완료',
+                                        style: menuTitle,
+                                      ),
+                                const Spacer(),
+                                kBtn(
+                                    onTap: () {
+                                      Get.back();
+                                      doneAction.value = false;
+                                      isLoading.value = false;
+                                      setState(() {});
+                                    },
+                                    child: const Center(child: Text('확인'))),
+                              ],
+                            ),
+                    ),
                   ),
                 )),
           );
@@ -834,7 +877,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
       List<Map<String, dynamic>> transactions) {
     Map<String, List<Map<String, dynamic>>> grouped = {};
     for (var transaction in transactions) {
-      String date = DateFormat('yyyy-MM-dd')
+      String date = DateFormat('yy.MM.dd')
           .format(DateTime.parse(transaction['created_at']));
       if (!grouped.containsKey(date)) {
         grouped[date] = [];

@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:jangboo_flutter/common_widget/Button/k_btn.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
+import 'package:jangboo_flutter/const/const.dart';
 import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/supabase.dart';
 import 'package:jangboo_flutter/user/edit_user_info_screen.dart';
@@ -19,60 +20,79 @@ class UserScreenDesktop extends StatefulWidget {
 class _UserScreenDesktopState extends State<UserScreenDesktop> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '설정',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Gap(30),
-          InfoContent(
-            title: '로그인 정보',
-            child: Text(
-              supabase.auth.currentUser!.email.toString(),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InfoContent(
-                  title: '내 이름',
-                  child: Obx(
-                    () => Text(
-                      userCtr.userName.value,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  )),
-              SizedBox(
-                  width: Get.width / 6,
-                  height: 45,
-                  child: kBtn(
-                      onTap: () async {
-                        Get.to(() => EditUserInfoScreen(
-                              userName: userCtr.userName.value,
-                              storeName: userCtr.storeName.value,
-                            ));
-                      },
-                      child: const Center(
-                        child: Text('내 정보 수정'),
-                      )))
-            ],
-          ),
-          InfoContent(
-              title: '내 가게명',
-              child: Obx(
-                () => Text(
-                  userCtr.storeName.value,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              )),
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SizedBox(
+                width: 120,
+                height: 45,
+                child: kBtn(
+                    onTap: () async {
+                      Get.to(() => EditUserInfoScreen(
+                            userName: userCtr.userName.value,
+                            storeName: userCtr.storeName.value,
+                          ));
+                    },
+                    child: const Center(
+                      child: Text('내 정보 수정'),
+                    ))),
+          )
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '설정',
+              style: menuTitle,
+            ),
+            const Gap(30),
+            InfoContent(
+              title: '로그인 정보',
+              child: Text(
+                supabase.auth.currentUser!.email.toString(),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            InfoContent(
+                title: '내 이름',
+                child: Obx(
+                  () => Text(
+                    userCtr.userName.value,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                )),
+            InfoContent(
+                title: '내 가게명',
+                child: Obx(
+                  () => Text(
+                    userCtr.storeName.value,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                )),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 30),
+              child: Divider(),
+            ),
+            SizedBox(
+                width: 120,
+                height: 45,
+                child: kBtn(
+                    onTap: () async {
+                      await userCtr.signOut();
+                    },
+                    child: const Center(
+                      child: Text('로그아웃'),
+                    ))),
+          ],
+        ),
       ),
     );
   }
