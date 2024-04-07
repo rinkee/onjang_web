@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:jangboo_flutter/common_widget/Button/k_btn.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
 import 'package:jangboo_flutter/const/const.dart';
+import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/controller/customer_content_controller.dart';
 import 'package:jangboo_flutter/controller/navigation_controller.dart';
 import 'package:jangboo_flutter/controller/screen_controller.dart';
@@ -14,7 +16,7 @@ import 'package:jangboo_flutter/customer/customer_screen_desktop.dart';
 import 'package:jangboo_flutter/model/customer_model.dart';
 import 'package:jangboo_flutter/supabase.dart';
 
-final customerCtr = Get.put(CustomerContentController());
+final _authCtr = Get.put(AuthController());
 
 class CustomerCard extends StatelessWidget {
   CustomerCard({
@@ -30,7 +32,7 @@ class CustomerCard extends StatelessWidget {
         stream: supabase
             .from('customer')
             .stream(primaryKey: ['id'])
-            .eq('user_id', supabase.auth.currentUser!.id)
+            .eq('user_id', _authCtr.uid.value)
             .order('favorite', ascending: false),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -133,20 +135,16 @@ class _kCustomerCardState extends State<kCustomerCard> {
                     var customer = widget.list[index];
                     print(customer.name);
                     final naviCtr = Get.put(NavigationController());
-                    final customerCtr = Get.put(CustomerContentController());
-                    customerCtr.selectCustomerList.clear();
-                    customerCtr.selectCustomerList.add(customer);
-                    customerCtr.currentCustomerIndex = index;
-                    customerCtr.fucSetUpActionButton(balance: customer.balance);
+                    final _customerCtr = Get.put(CustomerContentController());
+                    _customerCtr.selectCustomerList.clear();
+                    _customerCtr.selectCustomerList.add(customer);
+                    _customerCtr.currentCustomerIndex = index;
+                    _customerCtr.fucSetUpActionButton(
+                        balance: customer.balance);
 
-                    // naviCtr.customerChildMenu.value =
-                    //     CustomerChildMenuType.Home;
-                    // naviCtr.currentMenu.value = MenuType.Customer;
-                    customerCtr.filteredItems.clear();
-                    customerCtr.showSearchScreen.value = false;
+                    _customerCtr.filteredItems.clear();
+                    _customerCtr.showSearchScreen.value = false;
 
-                    // screenCtr.changeScreen(ContentType.Customer);
-                    // screenCtr.currentCustomer!.value = customer;
                     Get.to(const CustomerDesktop());
                   },
                   child: Padding(
@@ -171,9 +169,18 @@ class _kCustomerCardState extends State<kCustomerCard> {
                           ],
                         ),
                         const Spacer(),
-                        Text(
-                          '${f.format(widget.list[index].balance)}원',
-                          style: cardBalance,
+                        Row(
+                          children: [
+                            Text(
+                              f.format(widget.list[index].balance),
+                              style: cardBalance,
+                            ),
+                            const Gap(1),
+                            Text(
+                              'P',
+                              style: TextStyle(color: Colors.grey[700]),
+                            )
+                          ],
                         ),
                       ],
                     ),

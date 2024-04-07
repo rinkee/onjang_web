@@ -68,6 +68,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "fixnum",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/fixnum-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///Users/gimseong-il/flutter/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -78,6 +84,42 @@
       "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_secure_storage",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_linux",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_macos",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_platform_interface",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_web",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_windows",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "flutter_test",
@@ -108,42 +150,6 @@
       "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/get-4.6.6",
       "packageUri": "lib/",
       "languageVersion": "2.15"
-    },
-    {
-      "name": "google_identity_services_web",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.0+2",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "google_sign_in",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_sign_in-6.2.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "google_sign_in_android",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_sign_in_android-6.1.21",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "google_sign_in_ios",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_sign_in_ios-5.7.3",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "google_sign_in_platform_interface",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_sign_in_platform_interface-2.4.5",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "google_sign_in_web",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.3+2",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
     },
     {
       "name": "gotrue",
@@ -188,10 +194,34 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "js",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/js-0.6.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "jwt_decode",
       "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/jwt_decode-0.3.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "leak_tracker",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/leak_tracker-10.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "leak_tracker_flutter_testing",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-2.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "leak_tracker_testing",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/leak_tracker_testing-2.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
     },
     {
       "name": "lints",
@@ -201,19 +231,19 @@
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/matcher-0.12.16",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/matcher-0.12.16+1",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.0"
     },
     {
       "name": "material_color_utilities",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/material_color_utilities-0.5.0",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/material_color_utilities-0.8.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/meta-1.10.0",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/meta-1.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -225,9 +255,9 @@
     },
     {
       "name": "path",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/path-1.8.3",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/path-1.9.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.0"
     },
     {
       "name": "path_provider",
@@ -362,6 +392,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "sprintf",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/sprintf-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "stack_trace",
       "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/stack_trace-1.11.1",
       "packageUri": "lib/",
@@ -464,14 +500,26 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "uuid",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/uuid-4.3.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
     {
+      "name": "vm_service",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/vm_service-13.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "web",
-      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/web-0.3.0",
+      "rootUri": "file:///Users/gimseong-il/.pub-cache/hosted/pub.dev/web-0.4.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -506,7 +554,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-01-22T13:36:08.569265Z",
+  "generated": "2024-04-04T14:03:34.779708Z",
   "generator": "pub",
-  "generatorVersion": "3.2.5"
+  "generatorVersion": "3.3.0"
 }

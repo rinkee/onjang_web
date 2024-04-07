@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jangboo_flutter/common_widget/Button/k_btn.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
 import 'package:jangboo_flutter/const/const.dart';
@@ -93,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Padding(
                         padding: EdgeInsets.only(left: 5),
                         child: Text(
-                          '이메일',
+                          '전화번호',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -267,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           bgColor: sgColor,
                           child: const Center(
                               child: Text(
-                            '이메일 로그인',
+                            '로그인',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),

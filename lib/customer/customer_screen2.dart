@@ -775,7 +775,7 @@ class AddButton extends StatelessWidget {
               'type': 'add',
               'money': enterBalance,
             });
-            contentCtr.balance.value = newBalance;
+            // contentCtr.balance.value = newBalance;
             contentCtr.enterPrice.value = '';
           }
 
@@ -795,7 +795,7 @@ class AddButton extends StatelessWidget {
                 'type': 'use',
                 'money': enterBalance,
               });
-              contentCtr.balance.value = newBalance;
+              // contentCtr.balance.value = newBalance;
               contentCtr.enterPrice.value = '';
             }
           }

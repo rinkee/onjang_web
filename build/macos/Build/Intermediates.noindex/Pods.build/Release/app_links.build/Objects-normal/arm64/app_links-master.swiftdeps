@@ -1,0 +1,6 @@
+version: "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+options: "2451e0b0e6b3142a0691bbfa2815e7d2faf6757f1c79487f2d39ad17361b0043"
+build_start_time: [1712216821, 752263000]
+build_end_time: [1712216831, 952944000]
+inputs:
+  "/Users/gimseong-il/.pub-cache/hosted/pub.dev/app_links-3.5.0/macos/Classes/AppLinksMacosPlugin.swift": !dirty [1704873728, 668965151]

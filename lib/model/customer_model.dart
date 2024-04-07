@@ -36,7 +36,7 @@ class CustomerModel {
       card: json['card'] as String?,
       lastVisit: DateTime.parse(json['last_visit']),
       userId: json['user_id'] as String,
-      balance: json['balance'] as int,
+      balance: json['balance'],
       favorite: json['favorite'] as bool,
     );
   }

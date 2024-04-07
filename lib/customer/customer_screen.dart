@@ -44,11 +44,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('이름',
+                      const Text('이름',
                           style: TextStyle(fontSize: 16, color: Colors.grey)),
                       Text(
                         widget.customer.name,
-                        style: TextStyle(fontSize: 24),
+                        style: const TextStyle(fontSize: 24),
                       ),
                     ],
                   ),
@@ -71,7 +71,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
                             color: favorite
                                 ? Colors.amber[100]
                                 : Colors.grey[300]),
@@ -84,28 +85,28 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 color:
                                     favorite ? Colors.amber : Colors.grey[100],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 3,
                               ),
-                              Text('즐겨찾기 등록'),
+                              const Text('즐겨찾기 등록'),
                             ],
                           ),
                         ),
                       )),
                 ],
               ),
-              Gap(30),
+              const Gap(30),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('잔액 ',
+                  const Text('잔액 ',
                       style: TextStyle(fontSize: 16, color: Colors.grey)),
                   Row(
                     children: [
                       Text('${widget.customer.balance}원',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold)),
-                      Gap(10),
+                      const Gap(10),
                       GestureDetector(
                           onTap: () async {
                             if (mode == "사용하기") {
@@ -130,10 +131,10 @@ class _CustomerScreenState extends State<CustomerScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                    const BorderRadius.all(Radius.circular(10)),
                                 color: Colors.grey[300]),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Text('충전하기'),
                             ),
                           ))
@@ -141,7 +142,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               // Row(children: [
@@ -179,7 +180,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Gap(
+                            const Gap(
                               30,
                               color: Colors.blue,
                             ),
@@ -192,7 +193,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                       : Colors.black),
                             ),
                             mode == '사용하기'
-                                ? UseButton()
+                                ? const UseButton()
                                 : AddButton(
                                     customerId: widget.customer.id,
                                     beforeBalance: widget.customer.balance,
@@ -250,7 +251,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                           print(enter_price);
                                           setState(() {});
                                         },
-                                        child: Center(child: Text('C'))),
+                                        child: const Center(child: Text('C'))),
                                   ),
                                   number_padd(number: 0),
                                   Expanded(
@@ -260,7 +261,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                           print(enter_price);
                                           setState(() {});
                                         },
-                                        child: Center(child: Text('remove'))),
+                                        child: const Center(
+                                            child: Text('remove'))),
                                   ),
                                 ],
                               ),
@@ -288,7 +290,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           child: Center(
               child: Text(
             number.toString(),
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ))),
     );
   }
@@ -304,11 +306,11 @@ class UseButton extends StatelessWidget {
     return InkWell(
         onTap: () {},
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: Colors.blue),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
             child: Text(
               '사용하기',
               style: TextStyle(color: Colors.white),
@@ -331,20 +333,20 @@ class AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () async {
-          var add_balance = int.parse(enter_price);
-          var new_balance = beforeBalance + add_balance;
+          var addBalance = int.parse(enter_price);
+          var newBalance = beforeBalance + addBalance;
 
           await supabase.from('customer').upsert({
             'id': customerId,
-            'balance': new_balance,
+            'balance': newBalance,
           });
         },
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: sgColor),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
             child: Text(
               '충전하기',
               style: TextStyle(color: Colors.white),

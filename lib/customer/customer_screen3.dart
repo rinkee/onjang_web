@@ -1125,18 +1125,18 @@ class AddButton extends StatelessWidget {
           if (type == 'add') {
             // 충전 일때
 
-            var newBalance = beforeBalance + enterBalance;
-            await supabase.from('customer').upsert({
-              'id': customerId,
-              'balance': newBalance,
-            });
-            await supabase.from('balance_log').upsert({
-              'customer_id': customerId,
-              'type': 'add',
-              'money': enterBalance,
-            });
-            contentCtr.balance.value = newBalance;
-            contentCtr.enterPrice.value = '';
+            // double newBalance = beforeBalance + enterBalance;
+            // await supabase.from('customer').upsert({
+            //   'id': customerId,
+            //   'balance': newBalance,
+            // });
+            // await supabase.from('balance_log').upsert({
+            //   'customer_id': customerId,
+            //   'type': 'add',
+            //   'money': enterBalance,
+            // });
+            // contentCtr.balance.value = newBalance;
+            // contentCtr.enterPrice.value = '';
           }
 
           if (type == 'use') {
@@ -1155,7 +1155,7 @@ class AddButton extends StatelessWidget {
                 'type': 'use',
                 'money': enterBalance,
               });
-              contentCtr.balance.value = newBalance;
+              // contentCtr.balance.value = newBalance;
               contentCtr.enterPrice.value = '';
             }
           }

@@ -1,9 +1,12 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:jangboo_flutter/common_widget/k_customer_card.dart';
 import 'package:jangboo_flutter/home/home_screen_desktop.dart';
 import 'package:jangboo_flutter/login/login_screen.dart';
 import 'package:jangboo_flutter/mainScreen.dart';
 import 'package:jangboo_flutter/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthController extends GetxController {
   static AuthController get to => Get.find();
@@ -12,15 +15,31 @@ class AuthController extends GetxController {
   // RxBool isLoggedIn = false.obs;
   final userName = ''.obs;
   final storeName = ''.obs;
+  final uid = ''.obs;
 
   @override
   void onReady() {
     // TODO: implement onReady
     super.onReady();
-    _setupAuthListener();
+    // _setupAuthListener();
+    _checkLogin();
     //run every time auth state changes
     // ever(firebaseUser, handleAuthChanged);
     // firebaseUser.bindStream(user);
+  }
+
+  _checkLogin() async {
+    // Create storage
+    const storage = FlutterSecureStorage();
+
+    // Read value
+    final value = await storage.read(key: 'uid');
+    if (value == null || value.isEmpty) {
+      Get.offAll(const LoginScreen());
+    } else {
+      uid.value = value;
+      Get.offAll(const HomeScreenDesktop());
+    }
   }
 
   void _setupAuthListener() {
@@ -88,26 +107,31 @@ class AuthController extends GetxController {
   }
 
   Future signUp(
-      {required String email,
+      {required String phone,
       required String password,
       required String name,
       required String passwordHash,
       required String store_name}) async {
     try {
-      final AuthResponse res = await supabase.auth.signUp(
-        email: email,
-        password: password,
-      );
-      final Session? session = res.session;
-      final User? user = res.user;
+      // final AuthResponse res = await supabase.auth.signUp(
+      //   email: phone,
+      //   password: password,
+      // );
+      // final Session? session = res.session;
+      // final User? user = res.user;
+      var uuid = const Uuid().v4();
       await supabase.from('user').insert({
-        'email': email,
+        'phone': phone,
         'name': name,
         'password': passwordHash,
         'store_name': store_name,
-        'uid': user!.id,
+        'uid': uuid,
       }).select('*');
-      return res;
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'uid', value: uuid);
+      uid.value = uuid;
+
+      return 'seccess';
     } catch (e) {
       print(e);
       return 'error';

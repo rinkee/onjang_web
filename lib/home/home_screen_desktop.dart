@@ -55,6 +55,7 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
+              Text(userCtr.uid.value),
               const Gap(20),
               Obx(() => Padding(
                     padding: const EdgeInsets.only(right: 10),

@@ -1,0 +1,7 @@
+version: "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+options: "0aa8b96aed07c19e45dc35446defa2b135f48089667b3053d8c1d7d69de01950"
+build_start_time: [1712216821, 752261000]
+build_end_time: [1712216831, 952530000]
+inputs:
+  "/Users/gimseong-il/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.2/darwin/Classes/PathProviderPlugin.swift": !dirty [1705564351, 25219461]
+  "/Users/gimseong-il/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.2/darwin/Classes/messages.g.swift": !dirty [1705564351, 20625236]

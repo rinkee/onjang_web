@@ -357,20 +357,20 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                                 Row(
                                   children: [
                                     StackContent(
-                                      title: '최근 사용',
+                                      title: '마지막 사용',
                                       content: lastUsedDate,
                                     ),
                                     const Gap(10),
                                     StackContent(
-                                      title: '최근 사용 금액',
+                                      title: '최근 사용 포인트',
                                       content:
-                                          '${f.format(lastUsedPrice)}원', // lastUsedPrice가 int 타입이라면, int.parse() 제거
+                                          '${f.format(lastUsedPrice)}P', // lastUsedPrice가 int 타입이라면, int.parse() 제거
                                     ),
                                     const Gap(10),
                                     StackContent(
-                                      title: '평균 사용 금액',
+                                      title: '평균 사용 포인트',
                                       content:
-                                          '${f.format(avgUsedMoney.floor())}원', // avgUsedMoney를 바닥 함수로 처리하고 포맷 적용
+                                          '${f.format(avgUsedMoney.floor())}P', // avgUsedMoney를 바닥 함수로 처리하고 포맷 적용
                                     ),
                                   ],
                                 ),
@@ -484,7 +484,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                                                                       .grey),
                                                             ),
                                                             Text(
-                                                              '${f.format(transaction['money'])}원',
+                                                              '${f.format(transaction['money'])}P',
                                                               style: const TextStyle(
                                                                   fontSize: 14,
                                                                   color: Colors
@@ -558,7 +558,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
               )),
           Obx(
             () => Text(
-              '${f.format(customerCtr.balance.value)}원',
+              '${f.format(customerCtr.balance.value)}P',
               style: const TextStyle(
                   fontSize: 36, fontWeight: FontWeight.bold, height: 1),
             ),
@@ -665,210 +665,221 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
           isLoading.value = false;
           doneAction.value = false;
           print(doneAction.value);
-          return Dialog(
-            child: Obx(() => MaxWidthBox(
-                  maxWidth: maxWidth,
-                  child: KContainer(
-                    color: Colors.white,
-                    h: 550,
-                    child: Padding(
-                      padding: const EdgeInsets.all(50.0),
-                      child: !doneAction.value
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  title,
-                                  style: menuTitle,
-                                ),
-                                const Gap(10),
-                                KContainer(
-                                    w: 50,
-                                    h: 5,
-                                    color: color,
-                                    child: const SizedBox()),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Gap(50),
-                                          Text(
-                                            '잔액 ${f.format(customerCtr.balance.value)}원',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.grey[700]),
-                                          ),
+          return Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Dialog(
+              child: Obx(() => MaxWidthBox(
+                    maxWidth: maxWidth,
+                    child: KContainer(
+                      color: Colors.white,
+                      h: 700,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 40, bottom: 30.0, left: 40, right: 40),
+                        child: !doneAction.value
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: menuTitle,
+                                  ),
+                                  const Gap(10),
+                                  KContainer(
+                                      w: 50,
+                                      h: 5,
+                                      color: color,
+                                      child: const SizedBox()),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Gap(50),
+                                            Text(
+                                              '잔액 ${f.format(customerCtr.balance.value)}P',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.grey[700]),
+                                            ),
 
-                                          // RichText(
-                                          //     text: TextSpan(
-                                          //         text: '잔액 ${f.format(customerCtr.balance.value)}',
-                                          //         style: TextStyle(
-                                          //             fontSize: 18,
-                                          //             fontWeight: FontWeight.bold,
-                                          //             color: Colors.grey[800]),
-                                          //         children: const [
-                                          //       TextSpan(
-                                          //         text: '원에서',
-                                          //         style: TextStyle(
-                                          //             fontSize: 18, fontWeight: FontWeight.normal),
-                                          //       )
-                                          //     ])),
+                                            // RichText(
+                                            //     text: TextSpan(
+                                            //         text: '잔액 ${f.format(customerCtr.balance.value)}',
+                                            //         style: TextStyle(
+                                            //             fontSize: 18,
+                                            //             fontWeight: FontWeight.bold,
+                                            //             color: Colors.grey[800]),
+                                            //         children: const [
+                                            //       TextSpan(
+                                            //         text: '원에서',
+                                            //         style: TextStyle(
+                                            //             fontSize: 18, fontWeight: FontWeight.normal),
+                                            //       )
+                                            //     ])),
 
-                                          Obx(() {
-                                            var showNumber = 0;
-                                            if (customerCtr.enterPrice.value !=
-                                                '') {
-                                              // textColor =
-                                              //     const Color.fromRGBO(
-                                              //         0, 0, 0, 1);
-                                              showNumber = int.parse(
-                                                  customerCtr.enterPrice.value);
-                                            }
-                                            var showPriceSideCard = customerCtr
-                                                        .enterPrice.value ==
-                                                    ''
-                                                ? useText
-                                                : '${f.format(showNumber)}원';
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 0),
-                                              child: Text(
-                                                showPriceSideCard,
-                                                style: const TextStyle(
-                                                    fontSize: 28,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            );
-                                          }),
-                                        ],
+                                            Obx(() {
+                                              var showNumber = 0;
+                                              if (customerCtr
+                                                      .enterPrice.value !=
+                                                  '') {
+                                                // textColor =
+                                                //     const Color.fromRGBO(
+                                                //         0, 0, 0, 1);
+                                                showNumber = int.parse(
+                                                    customerCtr
+                                                        .enterPrice.value);
+                                              }
+                                              var showPriceSideCard = customerCtr
+                                                          .enterPrice.value ==
+                                                      ''
+                                                  ? useText
+                                                  : '${f.format(showNumber)}P';
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 0),
+                                                child: Text(
+                                                  showPriceSideCard,
+                                                  style: const TextStyle(
+                                                      fontSize: 28,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              );
+                                            }),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20)),
-                                            color: Colors.white),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: keys
-                                                .map(
-                                                  (x) => Row(
-                                                    children: x.map((y) {
-                                                      return Expanded(
-                                                        child:
-                                                            CustomKeyboardKey(
-                                                          textCtr: numberPadCtr,
-                                                          label: y,
-                                                          onTap: (val) {},
-                                                          value: y,
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                )
-                                                .toList(),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20)),
+                                              color: Colors.white),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(0.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: keys
+                                                  .map(
+                                                    (x) => Row(
+                                                      children: x.map((y) {
+                                                        return Expanded(
+                                                          child:
+                                                              CustomKeyboardKey(
+                                                            textCtr:
+                                                                numberPadCtr,
+                                                            label: y,
+                                                            onTap: (val) {},
+                                                            value: y,
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
 
-                                // const Gap(10),
-                                const Spacer(),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    kBtn(
-                                        onTap: () {
-                                          Get.back();
-                                          isLoading.value = false;
-                                        },
-                                        child: const AspectRatio(
-                                            aspectRatio: 1,
-                                            child: Icon(
-                                              Icons.close_rounded,
-                                              color: Colors.grey,
-                                            ))),
-                                    SizedBox(
-                                      width: 200,
-                                      child: kBtn(
-                                          onTap: () async {
-                                            if (isLoading.value == false) {
-                                              isLoading.value = true;
-                                              try {
-                                                await customerCtr
-                                                    .fucAddOrUse(
-                                                        customerId: customer.id)
-                                                    .then((value) {
-                                                  doneAction.value = true;
-                                                  isLoading.value = false;
-                                                });
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            } else {}
+                                  // const Gap(10),
+                                  const Spacer(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      kBtn(
+                                          onTap: () {
+                                            Get.back();
+                                            isLoading.value = false;
                                           },
-                                          bgColor: color,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Center(
-                                                child: Text(
-                                              title,
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
+                                          child: const AspectRatio(
+                                              aspectRatio: 1,
+                                              child: Icon(
+                                                Icons.close_rounded,
+                                                color: Colors.grey,
+                                              ))),
+                                      SizedBox(
+                                        width: 200,
+                                        child: kBtn(
+                                            onTap: () async {
+                                              if (isLoading.value == false) {
+                                                isLoading.value = true;
+                                                try {
+                                                  await customerCtr
+                                                      .fucAddOrUse(
+                                                          customerId:
+                                                              customer.id)
+                                                      .then((value) {
+                                                    doneAction.value = true;
+                                                    isLoading.value = false;
+                                                  });
+                                                } catch (e) {
+                                                  print(e);
+                                                }
+                                              } else {}
+                                            },
+                                            bgColor: color,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: Center(
+                                                  child: Text(
+                                                title,
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
                                             )),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Gap(50),
-                                Icon(Icons.check_circle_outline_rounded,
-                                    size: 70, color: color),
-                                const Gap(20),
-                                customerCtr.seclectedMenu == ActionType.add
-                                    ? Text(
-                                        '${f.format(int.parse(customerCtr.enterPrice.value))}원 충전완료',
-                                        style: menuTitle,
-                                      )
-                                    : Text(
-                                        '${f.format(int.parse(customerCtr.enterPrice.value))}원 사용완료',
-                                        style: menuTitle,
                                       ),
-                                const Spacer(),
-                                kBtn(
-                                    onTap: () {
-                                      Get.back();
-                                      doneAction.value = false;
-                                      isLoading.value = false;
-                                      setState(() {});
-                                    },
-                                    child: const Center(child: Text('확인'))),
-                              ],
-                            ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Gap(50),
+                                  Icon(Icons.check_circle_outline_rounded,
+                                      size: 70, color: color),
+                                  const Gap(20),
+                                  customerCtr.seclectedMenu == ActionType.add
+                                      ? Text(
+                                          '${f.format(int.parse(customerCtr.enterPrice.value))}P 충전완료',
+                                          style: menuTitle,
+                                        )
+                                      : Text(
+                                          '${f.format(int.parse(customerCtr.enterPrice.value))}P 사용완료',
+                                          style: menuTitle,
+                                        ),
+                                  const Spacer(),
+                                  kBtn(
+                                      onTap: () {
+                                        Get.back();
+                                        doneAction.value = false;
+                                        isLoading.value = false;
+                                        setState(() {});
+                                      },
+                                      child: const Center(child: Text('확인'))),
+                                ],
+                              ),
+                      ),
                     ),
-                  ),
-                )),
+                  )),
+            ),
           );
         });
   }
@@ -987,7 +998,7 @@ class CustomerNumberPad extends StatelessWidget {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 children: const [
               TextSpan(
-                text: '원에서',
+                text: 'P에서',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
               )
             ])),

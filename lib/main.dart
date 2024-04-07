@@ -10,6 +10,7 @@ import 'package:jangboo_flutter/home/home_screen_desktop.dart';
 import 'package:jangboo_flutter/login/login_screen.dart';
 import 'package:jangboo_flutter/login/sign_in_screen.dart';
 import 'package:jangboo_flutter/mainScreen.dart';
+import 'package:jangboo_flutter/splash.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -66,9 +67,10 @@ class MyApp extends StatelessWidget {
             seedColor: sgColor,
             background: Colors.white,
           ),
+          scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
           appBarTheme: const AppBarTheme(backgroundColor: Colors.white)),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

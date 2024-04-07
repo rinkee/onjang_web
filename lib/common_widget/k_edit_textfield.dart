@@ -4,17 +4,18 @@ import 'package:get/get.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
 
 class EditTextField extends StatefulWidget {
-  const EditTextField(
-      {super.key,
-      required this.ctr,
-      required this.title,
-      this.hintText,
-      this.bgColor,
-      this.onTap,
-      this.onChanged,
-      this.isPassword = false
-      // required this.value,
-      });
+  const EditTextField({
+    super.key,
+    required this.ctr,
+    required this.title,
+    this.hintText,
+    this.bgColor,
+    this.onTap,
+    this.onChanged,
+    this.isPassword = false,
+    this.textInputType,
+    // required this.value,
+  });
 
   final TextEditingController ctr;
   final String title;
@@ -23,6 +24,7 @@ class EditTextField extends StatefulWidget {
   final GestureTapCallback? onTap;
   final ValueChanged<String>? onChanged;
   final bool isPassword;
+  final TextInputType? textInputType;
 
   @override
   State<EditTextField> createState() => _EditTextFieldState();
@@ -61,6 +63,7 @@ class _EditTextFieldState extends State<EditTextField> {
                   children: [
                     Expanded(
                       child: TextField(
+                        keyboardType: widget.textInputType,
                         controller: widget.ctr,
                         onTap: widget.onTap,
                         obscureText: showPassword.value,

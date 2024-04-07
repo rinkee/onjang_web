@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jangboo_flutter/common_widget/k_customer_card.dart';
 import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/model/customer_model.dart';
 import 'package:jangboo_flutter/supabase.dart';
@@ -67,6 +68,7 @@ class CustomerContentController extends GetxController {
   var balance = 0.obs;
   var seclectedMenu = ActionType.use;
   Rx<Color>? cardColor = Colors.white.obs;
+  final _authCtr = Get.put(AuthController());
 
   @override
   void onReady() {
@@ -108,11 +110,12 @@ class CustomerContentController extends GetxController {
     String? co_phone,
     String? co_barcode,
   }) async {
+    final uid = _authCtr.uid.value;
     await supabase.from('customer').insert({
       'name': co_name,
       'phone': co_phone,
       'barcode': co_barcode,
-      'user_id': supabase.auth.currentUser!.id,
+      'user_id': uid,
       'created_at': DateTime.now().toIso8601String()
     }).select('*');
   }

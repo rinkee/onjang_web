@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jangboo_flutter/common_widget/Button/k_btn.dart';
 import 'package:jangboo_flutter/common_widget/k_container.dart';
 import 'package:jangboo_flutter/common_widget/k_edit_textfield.dart';
 import 'package:jangboo_flutter/const/const.dart';
 import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/home/home_screen.dart';
+import 'package:jangboo_flutter/home/home_screen_desktop.dart';
 import 'package:jangboo_flutter/login/login_screen.dart';
 import 'package:jangboo_flutter/supabase.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -90,7 +90,7 @@ class _SingInScreenState extends State<SingInScreen> {
     }
   }
 
-  var email = '';
+  var phone = '';
   var password = '';
 
   TextEditingController nameCtr = TextEditingController();
@@ -110,10 +110,41 @@ class _SingInScreenState extends State<SingInScreen> {
   var emailCheck = false;
   var passwordCheck = false;
 
+  checkPhone(String value) {
+    if (value.isEmpty) {
+      emailBgColor = Colors.red[100];
+      emailHintText = '전화번호를 입력해 주세요';
+      setState(() {});
+    }
+    if (value.length != 11) {
+      print('옳지않은 전화번호 형식');
+      emailBgColor = Colors.red[100];
+      emailHintText = '전화번호를 다시 한번 확인 해 주세요';
+      setState(() {});
+    }
+    if (value.length == 11) {
+      String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+      RegExp regExp = RegExp(patttern);
+      if (!regExp.hasMatch(value)) {
+        print('옳지않은 전화번호 형식');
+        print('옳지않은 전화번호 형식');
+        emailBgColor = Colors.red[100];
+        emailHintText = '전화번호를 다시 한번 확인 해 주세요';
+        setState(() {});
+      } else {
+        print('phone check');
+        emailHintText = '';
+        emailBgColor = Colors.green[100];
+        emailCheck = true;
+        setState(() {});
+      }
+    }
+  }
+
   checkEmail(String value) {
     if (value.isEmpty) {
       emailBgColor = Colors.red[100];
-      emailHintText = '이메일을 입력해 주세요';
+      emailHintText = '전화번호를 입력해 주세요';
       setState(() {});
     } else {
       String pattern =
@@ -122,9 +153,9 @@ class _SingInScreenState extends State<SingInScreen> {
       if (!regExp.hasMatch(value)) {
         print('wrong email');
         emailBgColor = Colors.red[100];
-        emailHintText = '잘못된 이메일 형식입니다.';
+        emailHintText = '잘못된 전화번호 형식입니다.';
         emailCtr.clear();
-        email = '';
+        phone = '';
         setState(() {});
       } else {
         print('email check');
@@ -211,15 +242,16 @@ class _SingInScreenState extends State<SingInScreen> {
                         Expanded(
                           child: EditTextField(
                             ctr: emailCtr,
-                            title: '이메일',
+                            title: '전화번호',
                             bgColor: emailBgColor,
                             hintText: emailHintText,
+                            textInputType: TextInputType.phone,
                             onTap: () {
                               emailBgColor = Colors.grey[100];
                               setState(() {});
                             },
                             onChanged: (_) {
-                              email = _;
+                              phone = _;
                               emailCheck = false;
                             },
                           ),
@@ -335,7 +367,7 @@ class _SingInScreenState extends State<SingInScreen> {
                               var passwordHash = sha256.convert(key).toString();
                               print(passwordHash);
 
-                              checkEmail(email);
+                              checkPhone(phone);
                               checkPassword(passwordCtr.text);
                               checkName(
                                   name: nameCtr.text,
@@ -346,16 +378,16 @@ class _SingInScreenState extends State<SingInScreen> {
                                   storeNameCtr.text != '') {
                                 final auth = Get.put(AuthController());
                                 final result = await auth.signUp(
-                                    email: email,
+                                    phone: phone,
                                     password: password,
                                     name: nameCtr.text,
                                     passwordHash: passwordHash,
                                     store_name: storeNameCtr.text);
-
+                                Get.to(() => const HomeScreenDesktop());
                                 // print(result['message']);
                                 if (result == 'error') {
                                   emailCtr.clear();
-                                  emailHintText = '이미 존재하는 이메일입니다';
+                                  emailHintText = '이미 존재하는 번호입니다';
                                   emailBgColor = Colors.red[100];
                                   setState(() {});
                                 }
