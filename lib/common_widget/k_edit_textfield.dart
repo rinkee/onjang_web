@@ -55,7 +55,7 @@ class _EditTextFieldState extends State<EditTextField> {
           ),
         ),
         const Gap(5),
-        KContainer(
+        BorderContainer(
           color: widget.bgColor ?? Colors.grey[100],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),

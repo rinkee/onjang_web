@@ -98,7 +98,7 @@ class CreateNewCustomerScreen extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return Dialog(
-                                    child: KContainer(
+                                    child: BorderContainer(
                                         w: 250,
                                         h: 150,
                                         child: Padding(

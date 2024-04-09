@@ -11,7 +11,7 @@ class KSearchBar extends StatelessWidget {
   final TextEditingController textCtr;
   @override
   Widget build(BuildContext context) {
-    return KContainer(
+    return BorderContainer(
         h: defaultContainerH,
         color: Colors.grey[200],
         child: Padding(

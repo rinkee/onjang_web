@@ -165,9 +165,9 @@ class CustomerContentController extends GetxController {
     }
   }
 
-  Future fucAddOrUse({required int customerId}) async {
+  Future fucAddOrUse({required int customerId, required int point}) async {
     var beforeBalance = balance.value;
-    var enterBalance = int.parse(enterPrice.value);
+    var enterBalance = point;
 
     if (seclectedMenu.state == 'add') {
       // 충전 일때

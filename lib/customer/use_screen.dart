@@ -20,7 +20,7 @@ class UseScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Column(
         children: [
-          KContainer(
+          BorderContainer(
             color: Colors.white,
             h: 550,
             child: Padding(
@@ -49,7 +49,7 @@ class UseScreen extends StatelessWidget {
                               ))),
                     ],
                   ),
-                  KContainer(
+                  BorderContainer(
                       w: 40,
                       h: 5,
                       color: Colors.green,

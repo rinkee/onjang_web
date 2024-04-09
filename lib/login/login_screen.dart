@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const Gap(5),
-                      KContainer(
+                      BorderContainer(
                           color: Colors.grey[100],
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const Gap(5),
-                      KContainer(
+                      BorderContainer(
                           color: Colors.grey[100],
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),

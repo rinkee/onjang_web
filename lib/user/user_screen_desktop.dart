@@ -108,7 +108,7 @@ class InfoTextFiled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return KContainer(
+    return BorderContainer(
       w: Get.width / 5,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

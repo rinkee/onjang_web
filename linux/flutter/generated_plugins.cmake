@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_window
   flutter_secure_storage_linux
   gtk
   url_launcher_linux

@@ -169,7 +169,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
                     ),
                   ),
                   const Gap(20),
-                  KContainer(
+                  BorderContainer(
                     h: 500,
                     child: Padding(
                       padding: const EdgeInsets.all(25.0),
@@ -280,8 +280,8 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
                   style: TextStyle(color: Colors.white),
                 )),
                 onTap: () async {
-                  await customerCtr.fucAddOrUse(
-                      customerId: customerCtr.customerList[idx].id);
+                  // await customerCtr.fucAddOrUse(
+                  //     customerId: customerCtr.customerList[idx].id);
 
                   setState(() {
                     numberPadCtr.clear();

@@ -184,7 +184,9 @@ class _HomeState extends State<Home> {
                 ],
               ),
               const Gap(20),
-              CustomerCard(),
+              CustomerCard(
+                favorite: false,
+              ),
             ],
           ),
         ),

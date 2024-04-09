@@ -19,10 +19,8 @@ import 'package:jangboo_flutter/supabase.dart';
 final _authCtr = Get.put(AuthController());
 
 class CustomerCard extends StatelessWidget {
-  CustomerCard({
-    super.key,
-  });
-
+  CustomerCard({super.key, required this.favorite});
+  final bool favorite;
   final isLoading = false.obs;
 
   @override
@@ -55,6 +53,14 @@ class CustomerCard extends StatelessWidget {
           customerCtr.customerList.clear();
           customerCtr.customerList.addAll(customers);
 
+          List<CustomerModel> favoriteList = [];
+          for (int i = 0; i < customers.length; i++) {
+            if (customers[i].favorite == true) {
+              favoriteList.add(customers[i]);
+            }
+          }
+          print(favoriteList);
+
           return Obx(() {
             if (customerCtr.filteredItems.isEmpty &&
                 customerCtr.showSearchScreen.value) {
@@ -71,10 +77,16 @@ class CustomerCard extends StatelessWidget {
               );
             } else {
               // filteredItems가 비어있지 않거나 showSearchScreen이 false인 경우
+
               var listToShow = customerCtr.filteredItems.isEmpty
                   ? customers
                   : customerCtr.filteredItems;
-              return kCustomerCard(list: listToShow);
+              if (favorite) {
+                return kCustomerCard(list: favoriteList);
+              } else {
+                return kCustomerCard(list: listToShow);
+              }
+              // return kCustomerCard(list: listToShow);
             }
           });
         },
@@ -124,10 +136,11 @@ class _kCustomerCardState extends State<kCustomerCard> {
             shrinkWrap: true,
             controller: _scrollController,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                mainAxisExtent: 100,
-                crossAxisCount: 2),
+              mainAxisExtent: 120,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              crossAxisCount: 4,
+            ),
             itemBuilder: (context, index) => kBtn(
                   hoverColor: Colors.grey[300],
                   bgColor: Colors.white,
@@ -135,52 +148,62 @@ class _kCustomerCardState extends State<kCustomerCard> {
                     var customer = widget.list[index];
                     print(customer.name);
                     final naviCtr = Get.put(NavigationController());
-                    final _customerCtr = Get.put(CustomerContentController());
-                    _customerCtr.selectCustomerList.clear();
-                    _customerCtr.selectCustomerList.add(customer);
-                    _customerCtr.currentCustomerIndex = index;
-                    _customerCtr.fucSetUpActionButton(
-                        balance: customer.balance);
+                    final customerCtr = Get.put(CustomerContentController());
+                    customerCtr.selectCustomerList.clear();
+                    customerCtr.selectCustomerList.add(customer);
+                    customerCtr.currentCustomerIndex = index;
+                    customerCtr.fucSetUpActionButton(balance: customer.balance);
 
-                    _customerCtr.filteredItems.clear();
-                    _customerCtr.showSearchScreen.value = false;
+                    customerCtr.filteredItems.clear();
+                    customerCtr.showSearchScreen.value = false;
 
                     Get.to(const CustomerDesktop());
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.list[index].name,
-                              style: cardTitle,
-                            ),
-                            const Gap(3),
-                            widget.list[index].favorite == true
-                                ? const Icon(
-                                    Icons.star_rate_rounded,
+                        widget.list[index].favorite == true
+                            ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Icon(
+                                    Icons.star_rounded,
                                     color: Colors.amber,
-                                  )
-                                : const SizedBox()
-                          ],
-                        ),
-                        const Spacer(),
-                        Row(
-                          children: [
-                            Text(
-                              f.format(widget.list[index].balance),
-                              style: cardBalance,
+                                    size: 20,
+                                  ),
+                                ],
+                              )
+                            : const Icon(
+                                Icons.star_rounded,
+                                color: Colors.transparent,
+                                size: 20,
+                              ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.list[index].name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: cardTitle,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      f.format(widget.list[index].balance),
+                                      style: cardBalance,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            const Gap(1),
-                            Text(
-                              'P',
-                              style: TextStyle(color: Colors.grey[700]),
-                            )
-                          ],
+                          ),
                         ),
                       ],
                     ),

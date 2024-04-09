@@ -90,7 +90,7 @@ class _EditUserInfoScreenState extends State<EditUserInfoScreen> {
                               context: context,
                               builder: (context) {
                                 return Dialog(
-                                    child: KContainer(
+                                    child: BorderContainer(
                                         w: 250,
                                         h: 180,
                                         child: Padding(

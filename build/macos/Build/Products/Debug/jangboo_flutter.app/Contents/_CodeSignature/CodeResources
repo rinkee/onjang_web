@@ -23,7 +23,7 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			1wIKGzgD/HtUEfUfagKou7vzDqY=
+			s0u6iPCNYF/8SU83nIONI3K0Zuw=
 			</data>
 			<key>requirement</key>
 			<string>identifier "io.flutter.flutter.app" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: seongil Kim (93G5925R7A)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
@@ -45,6 +45,15 @@
 			</data>
 			<key>requirement</key>
 			<string>identifier "org.cocoapods.app-links" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: seongil Kim (93G5925R7A)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		</dict>
+		<key>Frameworks/desktop_window.framework</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			trc7e3BAj++t8M9zupzEmBj38AI=
+			</data>
+			<key>requirement</key>
+			<string>identifier "org.cocoapods.desktop-window" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: seongil Kim (93G5925R7A)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 		</dict>
 		<key>Frameworks/flutter_secure_storage_macos.framework</key>
 		<dict>

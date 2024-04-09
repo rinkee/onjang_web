@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:jangboo_flutter/const/const.dart';
 import 'package:jangboo_flutter/controller/auth_controller.dart';
@@ -16,6 +20,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    await DesktopWindow.setWindowSize(
+        const Size(1000, 800)); // 가로 사이즈, 세로 사이즈 기본 사이즈 부여
+    await DesktopWindow.setMinWindowSize(const Size(900, 600)); // 최소 사이즈 부여
+    await DesktopWindow.setMaxWindowSize(const Size(1500, 1200)); // 최대 사이즈 부여
+  }
 
   await Supabase.initialize(
     url: 'https://rvombewznfvotchxajxu.supabase.co',
@@ -25,6 +35,7 @@ void main() async {
   Get.put(AuthController());
   Get.put(ScreenController());
   Get.lazyPut(() => CustomerContentController());
+
   runApp(const MyApp());
 }
 
@@ -46,6 +57,14 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
       theme: ThemeData(
 
           // This is the theme of your application.
@@ -69,7 +88,9 @@ class MyApp extends StatelessWidget {
           ),
           scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.white)),
+          appBarTheme: AppBarTheme(
+              iconTheme: const IconThemeData(color: Colors.white),
+              backgroundColor: Colors.blueGrey[900])),
       home: const SplashScreen(),
     );
   }

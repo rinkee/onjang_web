@@ -31,7 +31,6 @@ class _CustomKeyboardKeyState extends State<CustomKeyboardKey> {
         widget.label,
         style: const TextStyle(
           fontSize: 20.0,
-          fontWeight: FontWeight.bold,
         ),
       );
     } else {
@@ -41,7 +40,11 @@ class _CustomKeyboardKeyState extends State<CustomKeyboardKey> {
 
   keyPress() {
     if (widget.label is String) {
-      widget.textCtr.text = widget.textCtr.text + widget.value.toString();
+      if (widget.value == '0' && widget.textCtr.text == '') {
+        print('0');
+      } else {
+        widget.textCtr.text = widget.textCtr.text + widget.value.toString();
+      }
     } else {
       if (widget.textCtr.text != '') {
         String newString =
@@ -62,10 +65,13 @@ class _CustomKeyboardKeyState extends State<CustomKeyboardKey> {
           widget.onTap(widget.value);
           keyPress();
         },
-        child: AspectRatio(
-          aspectRatio: 2,
-          child: Center(
-            child: renderLabel(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: AspectRatio(
+            aspectRatio: 2,
+            child: Center(
+              child: renderLabel(),
+            ),
           ),
         ),
       ),
