@@ -76,15 +76,16 @@ class UseScreen extends StatelessWidget {
 
                   Obx(() {
                     var showNumber = 0;
-                    if (customerCtr.enterPrice.value != '') {
+                    if (customerCtr.enterUsePrice.value != '') {
                       // textColor =
                       //     const Color.fromRGBO(
                       //         0, 0, 0, 1);
-                      showNumber = int.parse(customerCtr.enterPrice.value);
+                      showNumber = int.parse(customerCtr.enterUsePrice.value);
                     }
-                    var showPriceSideCard = customerCtr.enterPrice.value == ''
-                        ? '얼마'
-                        : '${f.format(showNumber)}원';
+                    var showPriceSideCard =
+                        customerCtr.enterUsePrice.value == ''
+                            ? '얼마'
+                            : '${f.format(showNumber)}원';
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       child: Text(

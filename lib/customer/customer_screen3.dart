@@ -35,7 +35,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
   void initState() {
     favorite.value = widget.customer.favorite;
     contentCtr.balance.value = widget.customer.balance;
-    contentCtr.enterPrice.value = '';
+    contentCtr.enterUsePrice.value = '';
     contentCtr.type.value = ActionType.use.title;
     contentCtr.cardColor!.value = ActionType.use.iconColor!;
     if (contentCtr.balance.value == 0) {
@@ -102,7 +102,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     contentCtr.type.value =
                                         ActionType.add.title;
                                     mode = "충전하기";
-                                    contentCtr.enterPrice.value = '';
+                                    contentCtr.enterUsePrice.value = '';
                                     // setState(() {
                                     //
                                     // });
@@ -120,7 +120,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     contentCtr.type.value =
                                         ActionType.use.title;
                                     mode = "사용하기";
-                                    contentCtr.enterPrice.value = '';
+                                    contentCtr.enterUsePrice.value = '';
                                     // setState(() {
                                     //
                                     // });
@@ -138,7 +138,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     contentCtr.type.value =
                                         ActionType.card.title;
                                     mode = "충전하기";
-                                    contentCtr.enterPrice.value = '';
+                                    contentCtr.enterUsePrice.value = '';
                                     // setState(() {
                                     //
                                     // });
@@ -390,9 +390,9 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     var priceSize = 30.0;
                                     Color? priceColor = Colors.grey[100];
                                     var f = NumberFormat('###,###,###,###');
-                                    if (contentCtr.enterPrice.value != '') {
+                                    if (contentCtr.enterUsePrice.value != '') {
                                       showNumber = int.parse(
-                                          contentCtr.enterPrice.value);
+                                          contentCtr.enterUsePrice.value);
                                       priceSize = 50.0;
                                       priceColor = Colors.white;
                                     }
@@ -404,7 +404,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     }
 
                                     var content =
-                                        contentCtr.enterPrice.value == ''
+                                        contentCtr.enterUsePrice.value == ''
                                             ? '금액을 입력해주세요'
                                             : '${f.format(showNumber)}원';
                                     return Padding(
@@ -503,14 +503,14 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                                     var priceSize = 24.0;
                                     Color? priceColor = Colors.grey;
 
-                                    if (contentCtr.enterPrice.value != '') {
+                                    if (contentCtr.enterUsePrice.value != '') {
                                       showNumber = int.parse(
-                                          contentCtr.enterPrice.value);
+                                          contentCtr.enterUsePrice.value);
                                       priceSize = 30.0;
                                       priceColor = Colors.white;
                                     }
                                     var content =
-                                        contentCtr.enterPrice.value == ''
+                                        contentCtr.enterUsePrice.value == ''
                                             ? '카드번호나 바코드를 입력해주세요'
                                             : '$showNumber';
                                     return Padding(
@@ -913,7 +913,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                     Expanded(
                       child: InkWell(
                           onTap: () {
-                            contentCtr.enterPrice.value = '';
+                            contentCtr.enterUsePrice.value = '';
                           },
                           child: const Center(child: Text('C'))),
                     ),
@@ -921,7 +921,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
                     Expanded(
                       child: InkWell(
                           onTap: () {
-                            contentCtr.enterPrice.value = '';
+                            contentCtr.enterUsePrice.value = '';
                           },
                           child: const Center(child: Text('remove'))),
                     ),
@@ -936,7 +936,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
   addOrUseFun(state) async {
     var customerId = widget.customer.id;
     var beforeBalance = contentCtr.balance.value;
-    var enterBalance = int.parse(contentCtr.enterPrice.value);
+    var enterBalance = int.parse(contentCtr.enterUsePrice.value);
 
     if (state == 'add') {
       // 충전 일때
@@ -952,7 +952,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
         'money': enterBalance,
       });
       contentCtr.balance.value = newBalance;
-      contentCtr.enterPrice.value = '';
+      contentCtr.enterUsePrice.value = '';
     }
 
     if (state == 'use') {
@@ -960,7 +960,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
       var newBalance = beforeBalance - enterBalance;
       if (newBalance < 0) {
         print('잔액 부족');
-        contentCtr.enterPrice.value = '';
+        contentCtr.enterUsePrice.value = '';
       } else {
         await supabase.from('customer').upsert({
           'id': customerId,
@@ -972,7 +972,7 @@ class _CustomerScreenState extends State<CustomerScreen3> {
           'money': enterBalance,
         });
         contentCtr.balance.value = newBalance;
-        contentCtr.enterPrice.value = '';
+        contentCtr.enterUsePrice.value = '';
       }
     }
 
@@ -1003,8 +1003,8 @@ class _CustomerScreenState extends State<CustomerScreen3> {
     return Expanded(
       child: InkWell(
           onTap: () {
-            contentCtr.enterPrice.value =
-                contentCtr.enterPrice + number.toString();
+            contentCtr.enterUsePrice.value =
+                contentCtr.enterUsePrice + number.toString();
           },
           child: Container(
             decoration: const BoxDecoration(
@@ -1120,7 +1120,7 @@ class AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () async {
-          var enterBalance = int.parse(contentCtr.enterPrice.value);
+          var enterBalance = int.parse(contentCtr.enterUsePrice.value);
 
           if (type == 'add') {
             // 충전 일때
@@ -1144,7 +1144,7 @@ class AddButton extends StatelessWidget {
             var newBalance = beforeBalance - enterBalance;
             if (newBalance < 0) {
               print('잔액 부족');
-              contentCtr.enterPrice.value = '';
+              contentCtr.enterUsePrice.value = '';
             } else {
               await supabase.from('customer').upsert({
                 'id': customerId,
@@ -1156,7 +1156,7 @@ class AddButton extends StatelessWidget {
                 'money': enterBalance,
               });
               // contentCtr.balance.value = newBalance;
-              contentCtr.enterPrice.value = '';
+              contentCtr.enterUsePrice.value = '';
             }
           }
         },

@@ -59,7 +59,8 @@ class CustomerContentController extends GetxController {
   final selectCustomerList = <CustomerModel>[]; // 선택용
   final showSearchScreen = false.obs; // 검색 화면을 보여줄지
   var type = '사용하기'.obs;
-  var enterPrice = ''.obs;
+  var enterUsePrice = ''.obs;
+  var enterAddPrice = ''.obs;
   var coId = 0.obs;
   var coName = ''.obs;
   var coPhone = ''.obs;
@@ -108,13 +109,11 @@ class CustomerContentController extends GetxController {
   Future fucAddCustomer({
     required String co_name,
     String? co_phone,
-    String? co_barcode,
   }) async {
     final uid = _authCtr.uid.value;
     await supabase.from('customer').insert({
       'name': co_name,
       'phone': co_phone,
-      'barcode': co_barcode,
       'user_id': uid,
       'created_at': DateTime.now().toIso8601String()
     }).select('*');

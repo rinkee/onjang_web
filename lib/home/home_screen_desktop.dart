@@ -15,6 +15,7 @@ import 'package:jangboo_flutter/controller/customer_content_controller.dart';
 import 'package:jangboo_flutter/customer/customer_screen3.dart';
 import 'package:jangboo_flutter/layout/desktopLayout.dart';
 import 'package:jangboo_flutter/supabase.dart';
+import 'package:jangboo_flutter/user/edit_user_info_screen.dart';
 import 'package:jangboo_flutter/user/user_screen_desktop.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:timer_builder/timer_builder.dart';
@@ -63,9 +64,11 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
           padding: EdgeInsets.zero,
           children: [
             ListTile(
-              title: const Text('가게 이름'),
+              title: Obx(() => Text(userCtr.userData.value!.storeName)),
               onTap: () {
-                Navigator.pop(context);
+                Get.to(() => EditUserInfoScreen(
+                    userName: userCtr.userData.value!.name,
+                    storeName: userCtr.userData.value!.storeName));
               },
             ),
             ListTile(
@@ -83,39 +86,42 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
       ),
       appBar: AppBar(
         actions: [
-          Obx(
-            () => Text(
-              userCtr.storeName.value,
-              style: const TextStyle(color: Colors.black),
+          // Obx(
+          //   () => Text(
+          //     userCtr.storeName.value,
+          //     style: const TextStyle(color: Colors.black),
+          //   ),
+          // ),
+          // Text(userCtr.uid.value),
+          // const Gap(20),
+          // Obx(() => Padding(
+          //       padding: const EdgeInsets.only(right: 10),
+          //       child: SizedBox(
+          //           height: 45,
+          //           child: kBtn(
+          //               onTap: () async {
+          //                 Get.to(() => const UserScreenDesktop());
+          //               },
+          //               child: Padding(
+          //                 padding: const EdgeInsets.symmetric(horizontal: 14),
+          //                 child: Center(
+          //                   child: Text(userCtr.userData.value!.name),
+          //                 ),
+          //               ))),
+          //     )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TimerBuilder.periodic(
+              const Duration(seconds: 60),
+              builder: (context) {
+                return Text(
+                  DateFormat('M.dd (E) a hh:mm', 'ko_KR')
+                      .format(DateTime.now()),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, color: Colors.grey[300]),
+                );
+              },
             ),
-          ),
-          Text(userCtr.uid.value),
-          const Gap(20),
-          Obx(() => Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: SizedBox(
-                    height: 45,
-                    child: kBtn(
-                        onTap: () async {
-                          Get.to(() => const UserScreenDesktop());
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          child: Center(
-                            child: Text(userCtr.userName.value),
-                          ),
-                        ))),
-              )),
-          TimerBuilder.periodic(
-            const Duration(seconds: 60),
-            builder: (context) {
-              return Text(
-                DateFormat('M.dd (E) a hh:mm', 'ko_KR').format(DateTime.now()),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              );
-            },
           ),
         ],
       ),
@@ -168,7 +174,9 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
                               const Spacer(),
                               kBtn(
                                 bgColor: subColor,
-                                onTap: () {},
+                                onTap: () {
+                                  ShowMakeLedgerDialog(context: context);
+                                },
                                 child: const SizedBox(
                                   width: 120,
                                   child: Center(
@@ -243,5 +251,81 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
         ],
       ),
     );
+  }
+
+  Future<dynamic> ShowMakeLedgerDialog({
+    required BuildContext context,
+  }) {
+    var name = '';
+    var phone = '';
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+              child: BorderContainer(
+                  w: 350,
+                  h: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('이름'),
+                              TextField(
+                                onChanged: (val) {
+                                  name = val;
+                                },
+                              ),
+                              const Gap(30),
+                              const Text('전화번호'),
+                              TextField(
+                                keyboardType: TextInputType.phone,
+                                onChanged: (val) {
+                                  phone = val;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: kBtn(
+                                  onTap: () async {
+                                    customerCtr
+                                        .fucAddCustomer(
+                                      co_name: name,
+                                      co_phone: phone,
+                                    )
+                                        .then((value) async {
+                                      // await customerCtr.fucSetCustomerList();
+                                      Get.back();
+                                      // await supabase.from('customer').insert({
+                                      //   'name': name,
+                                      //   'phone': phone,
+                                      //   'barcode': barcode,
+                                      //   'user_id': 'testUserId'
+                                      // }).select('*');
+                                    });
+                                    Get.back();
+                                  },
+                                  bgColor: sgColor,
+                                  child: const Center(
+                                    child: Text(
+                                      '추가',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )));
+        });
   }
 }

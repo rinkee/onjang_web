@@ -42,7 +42,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
     // TODO: implement initState
 
     numberPadCtr.addListener(() {
-      customerCtr.enterPrice.value = numberPadCtr.text;
+      customerCtr.enterUsePrice.value = numberPadCtr.text;
     });
     idx = customerCtr.currentCustomerIndex;
     var customer = customerCtr.customerList[idx];
@@ -50,7 +50,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
     customerCtr.coId.value = customer.id;
     customerCtr.coName.value = customer.name;
     customerCtr.balance.value = customer.balance;
-    customerCtr.enterPrice.value = '';
+    customerCtr.enterUsePrice.value = '';
     // customerCtr.type.value = ActionType.use.title;
     // customerCtr.cardColor!.value = ActionType.use.iconColor!;
     // customerCtr.seclectedMenu = ActionType.use;
@@ -136,7 +136,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
                           onTap: () {
                             customerCtr.type.value = ActionType.use.title;
 
-                            customerCtr.enterPrice.value = '';
+                            customerCtr.enterUsePrice.value = '';
                             numberPadCtr.clear();
                             customerCtr.seclectedMenu = ActionType.use;
                           },
@@ -153,7 +153,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
                         KIconBtn(
                             onTap: () {
                               customerCtr.type.value = ActionType.add.title;
-                              customerCtr.enterPrice.value = '';
+                              customerCtr.enterUsePrice.value = '';
                               numberPadCtr.clear();
                               customerCtr.seclectedMenu = ActionType.add;
                             },
@@ -285,7 +285,7 @@ class _SettingCustomerDesktopState extends State<SettingCustomerDesktop> {
 
                   setState(() {
                     numberPadCtr.clear();
-                    customerCtr.enterPrice.value = '';
+                    customerCtr.enterUsePrice.value = '';
                   });
                 },
               ),

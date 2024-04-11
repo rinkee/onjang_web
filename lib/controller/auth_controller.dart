@@ -4,6 +4,7 @@ import 'package:jangboo_flutter/common_widget/k_customer_card.dart';
 import 'package:jangboo_flutter/home/home_screen_desktop.dart';
 import 'package:jangboo_flutter/login/login_screen.dart';
 import 'package:jangboo_flutter/mainScreen.dart';
+import 'package:jangboo_flutter/model/user_model.dart';
 import 'package:jangboo_flutter/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -13,31 +14,43 @@ class AuthController extends GetxController {
   // Rxn<User> firebaseUser = Rxn<User>();
   // Rxn<UserModel> firestoreUser = Rxn<UserModel>();
   // RxBool isLoggedIn = false.obs;
+  final Rx<UserModel?> userData = Rx<UserModel?>(null);
   final userName = ''.obs;
   final storeName = ''.obs;
   final uid = ''.obs;
 
   @override
-  void onReady() {
-    // TODO: implement onReady
-    super.onReady();
-    // _setupAuthListener();
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
     _checkLogin();
-    //run every time auth state changes
-    // ever(firebaseUser, handleAuthChanged);
-    // firebaseUser.bindStream(user);
   }
+
+  // @override
+  // void onReady() {
+  //   // TODO: implement onReady
+  //   super.onReady();
+  //   // _setupAuthListener();
+  //   _checkLogin();
+  //   //run every time auth state changes
+  //   // ever(firebaseUser, handleAuthChanged);
+  //   // firebaseUser.bindStream(user);
+  // }
 
   _checkLogin() async {
     // Create storage
     const storage = FlutterSecureStorage();
-
     // Read value
     final value = await storage.read(key: 'uid');
     if (value == null || value.isEmpty) {
       Get.offAll(const LoginScreen());
+      print(value);
     } else {
+      print(value);
       uid.value = value;
+
+      await fetchUserData(uid.value);
+
       Get.offAll(const HomeScreenDesktop());
     }
   }
@@ -81,8 +94,12 @@ class AuthController extends GetxController {
   }
 
   fetchUserData(uid) {
-    var userData = supabase.from('user').select().eq('uid', uid).then((value) {
+    var getUserData =
+        supabase.from('user').select().eq('uid', uid).then((value) {
       if (value.isNotEmpty) {
+        userData.value = UserModel.fromJson(value.first);
+        // userData = UserModel
+
         userName.value = value.first['name'];
         storeName.value = value.first['store_name'];
         print('connect user data');

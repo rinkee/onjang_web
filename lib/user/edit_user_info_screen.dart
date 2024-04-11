@@ -41,7 +41,7 @@ class _EditUserInfoScreenState extends State<EditUserInfoScreen> {
       maxWidth: maxWidth,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('내 정보 수정'),
+          title: const Text('내 정보 수정'),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
@@ -70,14 +70,14 @@ class _EditUserInfoScreenState extends State<EditUserInfoScreen> {
                       bgColor: sgColor,
                       onTap: () async {
                         if (nameCtr.text != '' && storeNameCtr.text != '') {
-                          var uid = supabase.auth.currentUser!.id;
+                          var uid = userCtr.userData.value!.uid;
                           await supabase
                               .from('user')
                               .update({
                                 'store_name': storeNameCtr.text,
                                 'name': nameCtr.text
                               })
-                              .eq('uid', supabase.auth.currentUser!.id)
+                              .eq('uid', uid)
                               .then((value) async {
                                 // 디비 값 변경후 업데이트ㅐㅡ
                                 await userCtr.fetchUserData(uid);

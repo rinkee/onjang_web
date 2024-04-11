@@ -79,9 +79,9 @@ class CreateNewCustomerScreen extends StatelessWidget {
                               Get.put(CustomerContentController());
                           customerCtr
                               .fucAddCustomer(
-                                  co_name: nameCtr.text,
-                                  co_phone: phoneCtr.text,
-                                  co_barcode: barcodeCtr.text)
+                            co_name: nameCtr.text,
+                            co_phone: phoneCtr.text,
+                          )
                               .then((value) async {
                             // await customerCtr.fucSetCustomerList();
                             Get.back();

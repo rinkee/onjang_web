@@ -43,20 +43,25 @@ class CustomerDesktop extends StatefulWidget {
 class _CustomerDesktopState extends State<CustomerDesktop> {
   final TextEditingController searchCtr = TextEditingController();
   final TextEditingController numberPadCtr = TextEditingController();
+
   final TextEditingController addPointCtr = TextEditingController();
 
   var f = NumberFormat('###,###,###,###');
   var favorite = false.obs;
   var idx = 0;
   late CustomerModel customer;
-  var doneAction = false.obs;
+  final openDialog = false.obs;
 
   @override
   void initState() {
     // TODO: implement initState
 
     numberPadCtr.addListener(() {
-      customerCtr.enterPrice.value = numberPadCtr.text;
+      customerCtr.enterUsePrice.value = numberPadCtr.text;
+    });
+
+    addPointCtr.addListener(() {
+      customerCtr.enterAddPrice.value = addPointCtr.text;
     });
     // idx = customerCtr.currentCustomerIndex;m
     customer = customerCtr.selectCustomerList.first;
@@ -74,7 +79,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
     }
 
     customerCtr.balance.value = customer.balance;
-    customerCtr.enterPrice.value = '';
+    customerCtr.enterUsePrice.value = '';
     // customerCtr.type.value = ActionType.use.title;
     // customerCtr.cardColor!.value = ActionType.use.iconColor!;
     // customerCtr.seclectedMenu = ActionType.use;
@@ -339,9 +344,9 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                         const Gap(10),
                         const Text('사용할 포인트를 적어주세요'),
                         Obx(() => Text(
-                              customerCtr.enterPrice.value == ''
+                              customerCtr.enterUsePrice.value == ''
                                   ? '0P'
-                                  : '${f.format(int.parse(customerCtr.enterPrice.value))}P',
+                                  : '${f.format(int.parse(customerCtr.enterUsePrice.value))}P',
                               style: const TextStyle(
                                   fontSize: 40, fontWeight: FontWeight.bold),
                             )),
@@ -383,21 +388,21 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                             customerCtr.type.value = ActionType.use.title;
                             customerCtr.seclectedMenu = ActionType.use;
                             if (isLoading.value == false &&
-                                customerCtr.enterPrice.value != '') {
+                                customerCtr.enterUsePrice.value != '') {
                               isLoading.value = true;
                               try {
                                 await customerCtr
                                     .fucAddOrUse(
                                         customerId: customer.id,
                                         point: int.parse(
-                                            customerCtr.enterPrice.value))
+                                            customerCtr.enterUsePrice.value))
                                     .then((value) {
                                   // setState(() {});
-                                  doneAction.value = true;
+
                                   isLoading.value = false;
                                   ShowDoneDialog(
                                       context: context,
-                                      point: customerCtr.enterPrice.value,
+                                      point: customerCtr.enterUsePrice.value,
                                       action: ActionType.use);
                                 });
                               } catch (e) {
@@ -439,11 +444,17 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
       {required BuildContext context,
       required String point,
       required ActionType action}) {
-    customerCtr.enterPrice.value = '';
+    customerCtr.enterUsePrice.value = '';
     numberPadCtr.clear();
+    openDialog.value = true;
     return showDialog(
         context: context,
         builder: (context) {
+          Future.delayed(const Duration(seconds: 3), () {
+            if (openDialog.value == true) {
+              Navigator.pop(context);
+            }
+          });
           return Dialog(
               child: BorderContainer(
                   w: 350,
@@ -486,6 +497,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                               child: kBtn(
                                   onTap: () async {
                                     Get.back();
+                                    openDialog.value = false;
                                   },
                                   bgColor: sgColor,
                                   child: const Center(
@@ -599,23 +611,22 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
             ),
             const Gap(20),
             kBtn(
+                h: 50,
                 onTap: () {
                   customerCtr.type.value = ActionType.add.title;
 
-                  customerCtr.enterPrice.value = '';
+                  customerCtr.enterUsePrice.value = '';
+                  addPointCtr.clear();
                   numberPadCtr.clear();
                   customerCtr.seclectedMenu = ActionType.add;
                   ActionBottomSheet();
                 },
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.wallet_rounded,
-                        color: sgColor,
-                      ),
-                      Gap(8),
+                      Icon(Icons.wallet_rounded, color: Colors.green),
+                      Gap(6),
                       Text(
                         '충전하기',
                         style: TextStyle(),
@@ -625,6 +636,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                 )),
           ],
         ),
+        const Gap(10),
         // const Gap(30),
         // Row(
         //   children: [
@@ -682,7 +694,6 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
     var useText = '얼마를 사용할까요?';
     Color color = sgColor;
     isLoading.value = false;
-    doneAction.value = false;
 
     if (customerCtr.seclectedMenu == ActionType.add) {
       title = '충전하기';
@@ -709,10 +720,10 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
             padding: const EdgeInsets.all(30.0),
             child: Dialog(child: Obx(() {
               var entryPoint = 0.0;
-              if (customerCtr.enterPrice.value != '') {
-                entryPoint = double.parse(customerCtr.enterPrice.value);
+              if (customerCtr.enterAddPrice.value != '') {
+                entryPoint = double.parse(customerCtr.enterAddPrice.value);
               }
-              var showAddPoint = customerCtr.enterPrice.value == ''
+              var showAddPoint = customerCtr.enterAddPrice.value == ''
                   ? useText
                   : '+ ${f.format(entryPoint)}P';
 
@@ -722,7 +733,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
 
               var addPoint = entryPoint + (entryPoint * addPercent.value / 100);
 
-              var showAfterPoint = customerCtr.enterPrice.value == ''
+              var showAfterPoint = customerCtr.enterAddPrice.value == ''
                   ? ''
                   : '${f.format(afterPoint)}P';
               return MaxWidthBox(
@@ -834,7 +845,7 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                                               children: x.map((y) {
                                                 return Expanded(
                                                   child: CustomKeyboardKey(
-                                                    textCtr: numberPadCtr,
+                                                    textCtr: addPointCtr,
                                                     label: y,
                                                     onTap: (val) {},
                                                     value: y,
@@ -878,13 +889,13 @@ class _CustomerDesktopState extends State<CustomerDesktop> {
                                                   point: addPoint.toInt())
                                               .then((value) {
                                             Get.back();
-                                            doneAction.value = true;
+
                                             isLoading.value = false;
 
                                             ShowDoneDialog(
                                                 context: context,
                                                 point: customerCtr
-                                                    .enterPrice.value,
+                                                    .enterAddPrice.value,
                                                 action: ActionType.add);
                                           });
                                         } catch (e) {

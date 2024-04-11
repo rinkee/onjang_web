@@ -35,12 +35,12 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
     // TODO: implement initState
     super.initState();
     numberPadCtr.addListener(() {
-      customerCtr.enterPrice.value = numberPadCtr.text;
+      customerCtr.enterUsePrice.value = numberPadCtr.text;
     });
     favorite.value = widget.customer.favorite;
     customerCtr.coName.value = widget.customer.name;
     customerCtr.balance.value = widget.customer.balance;
-    customerCtr.enterPrice.value = '';
+    customerCtr.enterUsePrice.value = '';
     customerCtr.type.value = ActionType.use.title;
     customerCtr.cardColor!.value = ActionType.use.iconColor!;
     customerCtr.seclectedMenu = ActionType.use;
@@ -106,7 +106,7 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
                           onTap: () {
                             customerCtr.type.value = ActionType.use.title;
 
-                            customerCtr.enterPrice.value = '';
+                            customerCtr.enterUsePrice.value = '';
                             numberPadCtr.clear();
                             customerCtr.seclectedMenu = ActionType.use;
                           },
@@ -120,7 +120,7 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
                         KIconBtn(
                             onTap: () {
                               customerCtr.type.value = ActionType.add.title;
-                              customerCtr.enterPrice.value = '';
+                              customerCtr.enterUsePrice.value = '';
                               numberPadCtr.clear();
                               customerCtr.seclectedMenu = ActionType.add;
                             },
@@ -133,7 +133,7 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
                         KIconBtn(
                             onTap: () {
                               customerCtr.type.value = ActionType.card.title;
-                              customerCtr.enterPrice.value = '';
+                              customerCtr.enterUsePrice.value = '';
                               customerCtr.seclectedMenu = ActionType.card;
                               numberPadCtr.clear();
                             },
@@ -273,14 +273,15 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
                   child: Obx(() {
                     var textColor = Colors.grey[500];
                     var showNumber = 0;
-                    if (customerCtr.enterPrice.value != '') {
+                    if (customerCtr.enterUsePrice.value != '') {
                       textColor = const Color.fromRGBO(0, 0, 0, 1);
-                      showNumber = int.parse(customerCtr.enterPrice.value);
+                      showNumber = int.parse(customerCtr.enterUsePrice.value);
                     }
 
-                    var showPriceSideCard = customerCtr.enterPrice.value == ''
-                        ? '금액을 입력해주세요'
-                        : '${f.format(showNumber)}원';
+                    var showPriceSideCard =
+                        customerCtr.enterUsePrice.value == ''
+                            ? '금액을 입력해주세요'
+                            : '${f.format(showNumber)}원';
                     if (customerCtr.type.value == ActionType.use.title) {
                       return Column(
                         mainAxisSize: MainAxisSize.max,
@@ -359,7 +360,7 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
                             padding: const EdgeInsets.all(20.0),
                             child: Center(
                               child: Text(
-                                '${customerCtr.enterPrice.value}원',
+                                '${customerCtr.enterUsePrice.value}원',
                                 style: const TextStyle(fontSize: 30),
                               ),
                             ),
@@ -447,7 +448,7 @@ class _CustomerScreenDesktopState extends State<CustomerScreenDesktop> {
 
                   setState(() {
                     numberPadCtr.clear();
-                    customerCtr.enterPrice.value = '';
+                    customerCtr.enterUsePrice.value = '';
                   });
                 },
               )
