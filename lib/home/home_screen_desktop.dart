@@ -11,9 +11,11 @@ import 'package:jangboo_flutter/common_widget/number_pad/keyboard.dart';
 import 'package:jangboo_flutter/common_widget/number_pad/number_pad.dart';
 import 'package:jangboo_flutter/common_widget/search/k_search_bar.dart';
 import 'package:jangboo_flutter/const/const.dart';
+import 'package:jangboo_flutter/controller/auth_controller.dart';
 import 'package:jangboo_flutter/controller/customer_content_controller.dart';
 import 'package:jangboo_flutter/customer/customer_screen3.dart';
 import 'package:jangboo_flutter/layout/desktopLayout.dart';
+import 'package:jangboo_flutter/login/login_screen.dart';
 import 'package:jangboo_flutter/supabase.dart';
 import 'package:jangboo_flutter/user/edit_user_info_screen.dart';
 import 'package:jangboo_flutter/user/user_screen_desktop.dart';
@@ -80,6 +82,15 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
               leading: const Icon(Icons.settings_rounded),
               title: const Text('설정'),
               onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout_rounded),
+              title: const Text('로그아웃'),
+              onTap: () async {
+                final authCtr = Get.put(AuthController());
+                await authCtr.signOut();
+                Get.offAll(const LoginScreen());
+              },
             ),
           ],
         ),

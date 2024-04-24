@@ -99,6 +99,19 @@ class ShowRecordScreen extends StatelessWidget {
                                               )
                                             ],
                                           ),
+                                          const Spacer(),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            child: Text(
+                                              transaction['canceled'] == true
+                                                  ? '취소 됨'
+                                                  : '',
+                                              style: const TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 16),
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),

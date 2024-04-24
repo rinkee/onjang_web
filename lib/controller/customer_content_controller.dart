@@ -220,6 +220,47 @@ class CustomerContentController extends GetxController {
     }
   }
 
+  fucCancleUse(
+      {required bool used,
+      required int id,
+      required int point,
+      required int customerId}) async {
+    var newBalance = 0;
+    if (used) {
+      // 사용이  충전이면
+      newBalance = balance.value - point;
+    } else {
+      newBalance = balance.value + point;
+    }
+    await supabase.from('balance_log').update({'canceled': true}).eq('id', id);
+    await supabase
+        .from('customer')
+        .update({'balance': newBalance}).eq('id', customerId);
+
+    balance.value = newBalance;
+  }
+
+  fucCancleToBack(
+      // 취소를 되돌리는 기능
+      {required bool used,
+      required int id,
+      required int point,
+      required int customerId}) async {
+    var newBalance = 0;
+    if (used) {
+      // 사용이  충전이면
+      newBalance = balance.value + point;
+    } else {
+      newBalance = balance.value - point;
+    }
+    await supabase.from('balance_log').update({'canceled': false}).eq('id', id);
+    await supabase
+        .from('customer')
+        .update({'balance': newBalance}).eq('id', customerId);
+
+    balance.value = newBalance;
+  }
+
   fucFavorite({required int customerId, required bool favorite}) async {
     await supabase.from('customer').update({'favorite': favorite}).eq(
       'id',

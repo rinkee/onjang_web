@@ -1095,57 +1095,83 @@ class History extends StatelessWidget {
 
                             return Column(
                               children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 5, bottom: 5),
-                                  child: Row(
-                                    children: [
-                                      transaction['type'] == 'add'
-                                          ? CircleAvatar(
-                                              radius: 16,
-                                              backgroundColor:
-                                                  Colors.green[100],
-                                              child: const Icon(
-                                                size: 18,
-                                                Icons.add_rounded,
-                                                color: Colors.green,
-                                              ))
-                                          : CircleAvatar(
-                                              backgroundColor: Colors.grey[100],
-                                              radius: 16,
-                                              child: const Icon(
-                                                Icons.remove,
-                                                size: 18,
-                                                color: Colors.grey,
-                                              )),
-                                      const Gap(14),
-                                      Text(
-                                        '${f.format(transaction['money'])}P',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[700]),
-                                      ),
+                                InkWell(
+                                  onTap: () {
+                                    if (transaction['canceled'] == true) {
+                                      AskCanceledToBack(
+                                          context,
+                                          transaction['money'],
+                                          transaction['id'],
+                                          transaction['type'] == 'add');
+                                    } else {
+                                      AskDeleteUsed(
+                                          context,
+                                          transaction['money'],
+                                          transaction['id'],
+                                          transaction['type'] == 'add');
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 5, bottom: 5),
+                                    child: Row(
+                                      children: [
+                                        transaction['type'] == 'add'
+                                            ? CircleAvatar(
+                                                radius: 16,
+                                                backgroundColor:
+                                                    Colors.green[100],
+                                                child: const Icon(
+                                                  size: 18,
+                                                  Icons.add_rounded,
+                                                  color: Colors.green,
+                                                ))
+                                            : CircleAvatar(
+                                                backgroundColor:
+                                                    Colors.grey[100],
+                                                radius: 16,
+                                                child: const Icon(
+                                                  Icons.remove,
+                                                  size: 18,
+                                                  color: Colors.grey,
+                                                )),
+                                        const Gap(14),
+                                        Text(
+                                          '${f.format(transaction['money'])}P',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey[700]),
+                                        ),
 
-                                      const Spacer(),
-                                      Text(
-                                        DateFormat('HH:mm').format(
-                                            DateTime.parse(
-                                                transaction['created_at'])),
-                                        style: const TextStyle(
-                                            fontSize: 14, color: Colors.grey),
-                                      ),
-                                      const Gap(10),
-                                      // Text(
-                                      //   transaction['type'] == 'add'
-                                      //       ? '충전'
-                                      //       : '사용',
-                                      //   style: TextStyle(
-                                      //       fontSize: 14,
-                                      //       color: transaction['type'] == 'add'
-                                      //           ? sgColor
-                                      //           : Colors.grey),
-                                      // ),
-                                    ],
+                                        const Spacer(),
+                                        Text(
+                                          transaction['canceled'] == true
+                                              ? '취소 됨'
+                                              : '',
+                                          style: const TextStyle(
+                                              fontSize: 14, color: Colors.blue),
+                                        ),
+                                        const Gap(10),
+                                        Text(
+                                          DateFormat('HH:mm').format(
+                                              DateTime.parse(
+                                                  transaction['created_at'])),
+                                          style: const TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                        const Gap(10),
+                                        // Text(
+                                        //   transaction['type'] == 'add'
+                                        //       ? '충전'
+                                        //       : '사용',
+                                        //   style: TextStyle(
+                                        //       fontSize: 14,
+                                        //       color: transaction['type'] == 'add'
+                                        //           ? sgColor
+                                        //           : Colors.grey),
+                                        // ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Divider(
@@ -1162,6 +1188,148 @@ class History extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<dynamic> AskDeleteUsed(
+      BuildContext context, int point, int id, bool used) {
+    var isLoading = false;
+    var showText = '충전을 취소 할까요?'; // used가 트루면 충전 false면 사용
+    if (used == false) {
+      showText = '사용을 취소 할까요?';
+    }
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+              child: BorderContainer(
+                  w: 350,
+                  h: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${f.format(point)}P',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24),
+                        ),
+                        Text(
+                          showText,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: kBtn(
+                                  bgColor: subColor,
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: const Center(
+                                    child: Text(
+                                      '아니요',
+                                      style: TextStyle(color: sgColor),
+                                    ),
+                                  )),
+                            ),
+                            const Gap(15),
+                            Expanded(
+                              child: kBtn(
+                                  onTap: () async {
+                                    if (isLoading == false) {
+                                      isLoading = true;
+                                      await customerCtr.fucCancleUse(
+                                          used: used,
+                                          id: id,
+                                          point: point,
+                                          customerId: customer.id);
+
+                                      isLoading = false;
+                                      Get.back();
+                                    }
+                                  },
+                                  child: const Center(
+                                    child: Text('네'),
+                                  )),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )));
+        });
+  }
+
+  Future<dynamic> AskCanceledToBack(
+      BuildContext context, int point, int id, bool used) {
+    var isLoading = false;
+    var showText = '충전을 취소 할까요?'; // used가 트루면 충전 false면 사용
+    if (used == false) {
+      showText = '사용을 취소 할까요?';
+    }
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+              child: BorderContainer(
+                  w: 350,
+                  h: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 30),
+                          child: Text(
+                            '이 취소를 되돌릴까요?',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: kBtn(
+                                  bgColor: subColor,
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: const Center(
+                                    child: Text(
+                                      '아니요',
+                                      style: TextStyle(color: sgColor),
+                                    ),
+                                  )),
+                            ),
+                            const Gap(15),
+                            Expanded(
+                              child: kBtn(
+                                  onTap: () async {
+                                    if (isLoading == false) {
+                                      isLoading = true;
+                                      await customerCtr.fucCancleToBack(
+                                          used: used,
+                                          id: id,
+                                          point: point,
+                                          customerId: customer.id);
+
+                                      isLoading = false;
+                                      Get.back();
+                                    }
+                                  },
+                                  child: const Center(
+                                    child: Text('네'),
+                                  )),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )));
+        });
   }
 }
 

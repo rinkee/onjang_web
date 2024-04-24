@@ -26,16 +26,16 @@ class AuthController extends GetxController {
     _checkLogin();
   }
 
-  // @override
-  // void onReady() {
-  //   // TODO: implement onReady
-  //   super.onReady();
-  //   // _setupAuthListener();
-  //   _checkLogin();
-  //   //run every time auth state changes
-  //   // ever(firebaseUser, handleAuthChanged);
-  //   // firebaseUser.bindStream(user);
-  // }
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    // _setupAuthListener();
+    _checkLogin();
+    //run every time auth state changes
+    // ever(firebaseUser, handleAuthChanged);
+    // firebaseUser.bindStream(user);
+  }
 
   _checkLogin() async {
     // Create storage
@@ -95,10 +95,12 @@ class AuthController extends GetxController {
 
   fetchUserData(uid) {
     var getUserData =
-        supabase.from('user').select().eq('uid', uid).then((value) {
+        supabase.from('user').select().eq('uid', uid).then((value) async {
       if (value.isNotEmpty) {
         userData.value = UserModel.fromJson(value.first);
-        // userData = UserModel
+        // 로컬 저장소에 저장
+        const storage = FlutterSecureStorage();
+        await storage.write(key: 'uid', value: userData.value!.uid);
 
         userName.value = value.first['name'];
         storeName.value = value.first['store_name'];
@@ -117,6 +119,7 @@ class AuthController extends GetxController {
       );
       final Session? session = res.session;
       final User? user = res.user;
+      await fetchUserData(user!.id);
       return res;
     } catch (e) {
       return e;
@@ -178,7 +181,11 @@ class AuthController extends GetxController {
   // }
 
   // // Sign out
-  Future<void> signOut() {
+  Future<void> signOut() async {
+    // Create storage
+    const storage = FlutterSecureStorage();
+    // Read value
+    final value = await storage.deleteAll();
     return supabase.auth.signOut();
   }
 }
